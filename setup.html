@@ -6,42 +6,68 @@
 <title>My Setup &middot; Miska's Shaman Macros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="site.css">
 <style>
 /* Layout: a title block, a modifier switch, then the keyboard as the main object, with a macro sheet below it for the selected key. */
 :root{--u:96px; --g:5px}
-.page{--pad:clamp(16px,3vw,48px);max-width:none;margin:0;padding-block:32px 64px;padding-inline:var(--pad)}
-header{margin-bottom:24px}
+.page{--pad:clamp(16px,3vw,48px);width:100%;max-width:var(--max);margin:0 auto;padding-block:32px 64px;padding-inline:var(--pad)}
+.phero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 48px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.phero .ptxt{min-width:0;flex:1 1 420px}
+.kicker{margin:0 0 10px;font:600 13px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.phero h1{font:700 clamp(34px,4.2vw,58px)/1.02 var(--display);letter-spacing:-.01em;margin:0 0 10px;text-wrap:balance}
 h1{font:700 clamp(28px,5vw,40px)/1.1 var(--display);letter-spacing:.02em;margin:0 0 8px;text-wrap:balance}
 .sub{margin:0;color:var(--mute);max-width:62ch}
-.stats{margin:10px 0 0;font:13px/1.4 var(--mono);color:var(--mute)}
+
 .mods{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
-.mods button{font:600 15px/1 var(--sans);padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;cursor:pointer}
+.mods{position:sticky;top:58px;z-index:6;margin-inline:calc(var(--pad) * -1);padding:10px var(--pad);background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.mods button{font:600 15px/1 var(--sans);padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:0;cursor:pointer}
 .mods button:hover{border-color:var(--accent)}
 .mods button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.kbwrap{--fit:calc((100vw - 20px - 2*var(--pad) - 8*var(--g) - 68px)/10.6);--u:clamp(88px,var(--fit),170px);display:flex;align-items:flex-start;gap:28px;overflow-x:auto;padding:2px 2px 12px}
+/* One scale for keyboard, mouse and details: the keys fill whatever width is left after the right-hand rail */
+.stage{--rail:500px;--fit:calc((min(100vw,var(--max)) - 20px - 2*var(--pad) - 8*var(--g) - 40px - var(--rail))/7.75);--u:clamp(120px,var(--fit),230px);--h:clamp(120px,calc(var(--u)*.8),168px)}
+.stagegrid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:40px;align-items:start}
+.left{min-width:0}
+.kbwrap{overflow-x:auto;padding:2px 2px 12px}
+.rail{position:sticky;top:132px;display:flex;flex-direction:column;gap:20px;min-width:0;max-height:calc(100vh - 150px);overflow:auto;padding:2px}
+@media (max-width:1699px){.stage{--rail:0px}.stage{padding-bottom:40px}.stagegrid{grid-template-columns:minmax(0,1fr)}.rail{position:static;max-height:none;overflow:visible}}
 .kb{width:max-content;display:flex;flex-direction:column;gap:var(--g)}
 .row{display:flex;gap:var(--g)}
-.key{width:calc(var(--u)*var(--w) + (var(--w) - 1)*var(--g));height:var(--h,var(--u));min-width:0;padding:6px;border:1px solid var(--line);border-bottom-width:3px;border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;overflow:hidden;cursor:default}
+.key{width:calc(var(--u)*var(--w) + (var(--w) - 1)*var(--g));height:var(--h,var(--u));min-width:0;padding:6px;border:1px solid var(--line);border-bottom-width:3px;border-radius:0;background:var(--surface);color:var(--ink);font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;overflow:hidden;cursor:default}
 .key .k{font:700 clamp(18px,calc(var(--u)/6.5),28px)/1 var(--mono);color:var(--mute);letter-spacing:.04em}
 .key .a{font:600 clamp(12px,calc(var(--u)/8),16px)/1.2 var(--sans);overflow-wrap:anywhere}
 .key:disabled{opacity:.5}
-.key.b{cursor:pointer;border-color:var(--accent);background:var(--raised)}
+.key:disabled .k,.key.n .k{font-size:clamp(14px,calc(var(--u)/9),20px);font-weight:600}
+.key.b{cursor:pointer;background:var(--raised)}
 .key.b .k{color:var(--accent)}
 .key.b:hover{background:var(--accent-soft)}
-.key.n{cursor:pointer;opacity:.45;border-color:var(--line);background:var(--surface)}
+.key.n{cursor:pointer;opacity:.45;}
 .key.n .k{color:var(--mute)}
 .key.fb .a{color:var(--mute);font-weight:400}
 .key.sel{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent)}
-.kbwrap.all{--u:clamp(150px,var(--fit),230px);--h:clamp(136px,calc(var(--u)*.8),168px)}
+.key{border-bottom-width:5px}
+.key.b:active{transform:translateY(2px);border-bottom-width:3px}
+@media (prefers-reduced-motion:no-preference){
+}
+.kbwrap[data-mod="shift"] .key.b{--tint:var(--c-shift);--tm:55%}
+.kbwrap[data-mod="ctrl"] .key.b{--tint:var(--c-ctrl);--tm:55%}
+.kbwrap[data-mod="alt"] .key.b{--tint:var(--c-alt);--tm:55%}
+.kbwrap[data-mod="altshift"] .key.b{--tint:var(--c-as);--tm:55%}
+.kbwrap[data-mod="shift"] .key.b .k{color:var(--c-shift)}
+.kbwrap[data-mod="ctrl"] .key.b .k{color:var(--c-ctrl)}
+.kbwrap[data-mod="alt"] .key.b .k{color:var(--c-alt)}
+.kbwrap[data-mod="altshift"] .key.b .k{color:var(--c-as)}
+@media (prefers-reduced-motion:no-preference){
+  .key{transition:transform .15s,box-shadow .2s,border-color .15s,background-color .15s}
+}
+
 .key.stack{align-items:stretch;justify-content:flex-start;gap:4px;text-align:left;padding:7px 8px}
 .key.stack .k{text-align:center;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .key.stack .a{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:3px 7px;align-items:start;font-weight:400}
 .key.stack .ln{display:contents}
-.key.stack .ln span:last-child{font-size:clamp(11px,calc(var(--u)/14),14px);line-height:1.2;overflow-wrap:anywhere}
-.key.stack .tag{font:700 clamp(10px,calc(var(--u)/16),13px)/1.25 var(--mono)}
+.key.stack .ln span:last-child{font-size:clamp(12px,calc(var(--u)/10.5),17px);line-height:1.2;overflow-wrap:anywhere}
+.key.stack .tag{font:700 clamp(10px,calc(var(--u)/14),14px)/1.25 var(--mono)}
 .key.stack .ln.base span:last-child{font-weight:700}
 .key.stack .ln.base .tag{color:var(--mute)}
 .tx.shift{color:var(--x-shift)}
@@ -49,20 +75,21 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tx.alt{color:var(--x-alt)}
 .tx.altshift{color:var(--x-as)}
 .tag.cond{color:var(--accent)}
-.kbwrap.all .mouse .key{height:auto;min-height:var(--h)}
+.stage .key{height:auto;min-height:var(--h)}
 .tag.shift{color:var(--c-shift)}
 .tag.ctrl{color:var(--c-ctrl)}
 .tag.alt{color:var(--c-alt)}
 .tag.altshift{color:var(--c-as)}
-.legend{display:flex;flex-wrap:wrap;gap:8px 28px;margin:-6px 0 6px 2px;font:700 clamp(17px,1.5vw,22px)/1 var(--sans)}
-.legend span::before{content:"";display:inline-block;width:.8em;height:.8em;border-radius:4px;margin-right:.45em;vertical-align:-.05em;background:currentColor}
+.legend{display:flex;flex-wrap:wrap;gap:8px 28px;margin:-6px 0 6px 2px;font:600 14px/1 var(--sans)}
+.legend span::before{content:"";display:inline-block;width:.8em;height:.8em;border-radius:0;margin-right:.45em;vertical-align:-.05em;background:currentColor}
 .legend .shift{color:var(--c-shift)}
 .legend .ctrl{color:var(--c-ctrl)}
 .legend .alt{color:var(--c-alt)}
 .legend .altshift{color:var(--c-as)}
-.mouse{display:grid;grid-template-columns:auto auto;grid-template-areas:"lbl lbl" "key mm";align-items:start;gap:6px 40px;flex:none}
+
+.mouse{display:grid;grid-template-columns:auto auto;grid-template-areas:"lbl lbl" "key mm";align-items:start;gap:6px 24px;flex:none}
 .mouse #mouse{grid-area:key}
-.mm{grid-area:mm;width:clamp(190px,calc(var(--u)*1.8),340px);padding:6px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;line-height:0}
+.mm{grid-area:mm;width:clamp(96px,calc(var(--u)*.7),140px);padding:6px 8px;border:1px solid var(--line);border-radius:0;background:var(--surface);cursor:pointer;line-height:0}
 .mm:hover{border-color:var(--accent)}
 .mm.sel{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent)}
 .mm svg{width:100%;height:auto;overflow:visible}
@@ -77,16 +104,25 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .mm.dim .num.on{fill:var(--mute)}
 .mouse .lbl{grid-area:lbl;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .hint{margin:6px 0 0;font-size:13px;color:var(--mute)}
-.panel{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
-.phead{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
-.bigkey{min-width:76px;height:76px;padding-inline:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent);border-bottom-width:4px;border-radius:12px;background:var(--raised);font:700 30px/1 var(--display);color:var(--accent)}
+.stage{position:relative}
+
+.panel{position:relative;margin:0;background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:0;padding:20px 22px}
+.panel.empty{border-style:dashed;border-color:var(--line);color:var(--mute)}
+.pempty{margin:0;font-size:15px}
+.pclose{position:absolute;top:12px;right:14px;font:600 12px/1 var(--mono);letter-spacing:.06em;padding:7px 11px;border:1px solid var(--line);border-radius:0;background:transparent;color:var(--mute);cursor:pointer}
+.pclose:hover{border-color:var(--accent);color:var(--accent)}
+
+
+
+.phead{display:flex;align-items:center;gap:16px;margin:0 0 16px;padding-right:70px}
+.bigkey{min-width:76px;height:76px;padding-inline:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent);border-bottom-width:4px;border-radius:0;background:var(--raised);font:700 30px/1 var(--display);color:var(--accent)}
 .bigkey.long{font-size:20px}
 .ptitle{min-width:0;flex:1 1 220px}
 .eyebrow{margin:0 0 2px;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .ptitle h2{margin:0;font:700 22px/1.25 var(--display);letter-spacing:.01em;text-wrap:balance}
-.binds{display:grid;grid-template-columns:max-content 1fr;gap:0;margin:0 0 14px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.binds{display:grid;grid-template-columns:max-content 1fr;gap:0;margin:0 0 14px;border:1px solid var(--line);border-radius:0;overflow:hidden}
 .binds .r{display:contents}
-.binds dt,.binds dd{margin:0;padding:8px 12px;border-top:1px solid var(--line)}
+.binds dt,.binds dd{margin:0;padding:6px 12px;border-top:1px solid var(--line)}
 .binds .r:first-child dt,.binds .r:first-child dd{border-top:0}
 .binds dt{font:500 12px/1.5 var(--mono);color:var(--mute);background:var(--raised)}
 .binds dd{min-width:0;overflow-wrap:anywhere}
@@ -94,15 +130,16 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .binds .r.on dt{color:var(--accent);font-weight:500}
 .fallback{margin:0 0 14px;font-size:14px;color:var(--mute)}
 .note{margin:0 0 14px;color:var(--mute);max-width:70ch}
-.pbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px 28px;align-items:start}
-.pbody .macro{position:sticky;top:72px}
+
+.pbody{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:start}
+
 @media (max-width:900px){.pbody{grid-template-columns:minmax(0,1fr)}.pbody .macro{position:static}}
 #all{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:8px;align-items:start}
 #all details{margin-bottom:0}
 .all{margin-top:36px}
 .all h3{margin:0 0 4px;font:700 20px/1.25 var(--display);letter-spacing:.01em}
 .all p.lead{margin:0 0 14px;color:var(--mute)}
-details{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px;overflow:hidden}
+details{border:1px solid var(--line);border-radius:0;background:var(--surface);margin-bottom:8px;overflow:hidden}
 summary{display:flex;gap:12px;align-items:center;height:68px;padding:0 14px;cursor:pointer;list-style:none}
 summary::-webkit-details-marker{display:none}
 summary .kk{font:500 13px/1 var(--mono);color:var(--accent);min-width:64px}
@@ -123,40 +160,127 @@ details .macro{border:0;border-radius:0}
 @media (prefers-reduced-motion:no-preference){
   .key,.mods button,.copy{transition:background-color .12s,border-color .12s,color .12s}
 }
+/* Below 1700px there is no room for the rail, so the details open as a bottom sheet (kept last so it wins over the panel rules above) */
+@media (max-width:1699px){
+  .panel{position:fixed;left:var(--pad);right:var(--pad);bottom:12px;z-index:20;max-height:56vh;overflow:auto;box-shadow:0 -16px 48px -20px rgba(0,0,0,.6)}
+  .panel.empty{display:none}
+  .stage.has-panel{padding-bottom:400px}
+  .panel .pbody{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px 28px}
+}
+.stage:not([data-mod="all"]) .key.stack .a{display:block}
+.stage:not([data-mod="all"]) .key.stack .tag{display:none}
+.key.b{box-shadow:0 0 0 0 transparent,inset 0 0 22px -14px var(--accent)}
+.key.b:hover{box-shadow:0 12px 28px -14px var(--accent),inset 0 0 22px -12px var(--accent)}
+@media (prefers-reduced-motion:no-preference){
+  .key.b:hover{transform:translateY(-3px)}
+  .key.sel{animation:keypulse 2.2s ease-in-out infinite}
+  @keyframes keypulse{0%,100%{box-shadow:0 0 0 2px var(--accent),0 0 0 0 transparent}50%{box-shadow:0 0 0 2px var(--accent),0 0 22px 2px color-mix(in srgb,var(--accent) 45%,transparent)}}
+  .mm .side.on{animation:sidepulse 2.4s ease-in-out infinite}
+  @keyframes sidepulse{0%,100%{filter:none}50%{filter:drop-shadow(0 0 5px var(--accent))}}
+  .kbwrap.intro .key{animation:keyin .5s ease both;animation-delay:calc(var(--i,0) * 14ms)}
+  @keyframes keyin{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+}
+/* Keycaps: the four borders are the sloped sides (wide light front, dark left), the content box is the top face */
+.key{--tint:var(--accent);--tm:0%;
+  --face:linear-gradient(color-mix(in srgb,#000 5%,var(--surface)),var(--surface));
+  border-style:solid;border-width:5px 9px 15px 9px;
+  border-color:
+    color-mix(in srgb,var(--tint) var(--tm),color-mix(in srgb,#000 12%,var(--surface)))
+    color-mix(in srgb,var(--tint) var(--tm),color-mix(in srgb,#000 6%,var(--surface)))
+    color-mix(in srgb,var(--tint) var(--tm),color-mix(in srgb,#fff 8%,var(--raised)))
+    color-mix(in srgb,var(--tint) var(--tm),color-mix(in srgb,#000 24%,var(--surface)));
+  background:var(--face);padding:9px 9px 8px}
+.key.stack{padding:9px 9px 8px}
+.key.b{--tm:22%;--face:linear-gradient(color-mix(in srgb,var(--accent) 12%,var(--surface)),color-mix(in srgb,var(--accent) 5%,var(--surface)))}
+.key.n,.key:disabled{--tm:0%}
+.key.b,.key.n,.key.b:hover,.key.sel{background:var(--face)}
+.key.b:hover{--face:linear-gradient(var(--accent-soft),color-mix(in srgb,var(--accent) 8%,var(--surface)))}
+.key.sel{--face:linear-gradient(var(--accent-soft),color-mix(in srgb,var(--accent) 10%,var(--surface)))}
+.key.b:active{border-width:8px 9px 11px 9px;padding-bottom:6px}
+/* Slightly rounded, with a little depth: a hard under-edge and a soft shadow beneath */
+.key,.key.b,.key.n{border-radius:6px;box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 14px -7px rgba(0,0,0,.55),inset 0 1px 0 color-mix(in srgb,#fff 16%,transparent)}
+.key.b:hover{box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 16px -6px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 1px 0 color-mix(in srgb,#fff 20%,transparent)}
+.key.sel,.key.b.sel{box-shadow:0 0 0 2px var(--accent),0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 14px -7px rgba(0,0,0,.55)}
+.key.b:active{box-shadow:0 1px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 3px 8px -4px rgba(0,0,0,.5);transform:translateY(3px)}
+/* All view: keys keep a keyboard-like height. Each action sits on one line (the base action may use two) and the full text is on hover and in the panel. */
+.stage[data-mod="all"]{--h:clamp(140px,calc(var(--u)*.94),164px)}
+.stage[data-mod="all"] .kb .key{height:var(--h);min-height:0}
+.stage[data-mod="all"] .key.stack .ln span:last-child{font-size:clamp(11px,calc(var(--u)/12),15px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage[data-mod="all"] .key.stack .ln.base span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage[data-mod="all"] .key.stack .tag{font-size:clamp(9px,calc(var(--u)/16),12px)}
+/* The key's letter or number is a large faint watermark behind its text */
+.key{position:relative}
+.key.stack .k{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;font-size:clamp(56px,calc(var(--u)*.55),104px);line-height:1;opacity:.17;pointer-events:none;z-index:0}
+.key.stack .a{position:relative;z-index:1}
+#mouse .key.stack .k{font-size:clamp(20px,calc(var(--u)*.17),28px);letter-spacing:0}
+/* Empty keys use the same watermark: a big faint label, a little smaller for words like Tab and Shift */
+.key .k{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;font-size:clamp(56px,calc(var(--u)*.55),104px);line-height:1;opacity:.17;pointer-events:none}
+.key.lab .k{font-size:clamp(26px,calc(var(--u)*.28),44px)}
+.key:disabled .k,.key.n .k{font-size:clamp(56px,calc(var(--u)*.55),104px);font-weight:700;opacity:.12;color:var(--mute)}
+.key.lab:disabled .k,.key.lab.n .k{font-size:clamp(26px,calc(var(--u)*.28),44px)}
+.key:disabled,.key.n{opacity:.72}
+#mouse .key .k{font-size:clamp(20px,calc(var(--u)*.17),28px);letter-spacing:0}
+/* Outside the All view each key shows one action, so it sits in the middle of the key */
+.stage:not([data-mod="all"]) .key.stack{justify-content:center;align-items:center;text-align:center}
+.stage:not([data-mod="all"]) .key.stack .a{width:100%;text-align:center}
+/* Modifier tabs wear their own colours: Shift green, Ctrl orange, Alt purple, Alt + Shift pink, All the rainbow */
+.mods button[data-m="shift"]{--mc:var(--c-shift)}
+.mods button[data-m="ctrl"]{--mc:var(--c-ctrl)}
+.mods button[data-m="alt"]{--mc:var(--c-alt)}
+.mods button[data-m="altshift"]{--mc:var(--c-as)}
+.mods button[data-m="shift"],.mods button[data-m="ctrl"],.mods button[data-m="alt"],.mods button[data-m="altshift"]{color:var(--mc);border-color:color-mix(in srgb,var(--mc) 55%,var(--line));border-bottom:3px solid var(--mc)}
+.mods button[data-m="shift"]:hover,.mods button[data-m="ctrl"]:hover,.mods button[data-m="alt"]:hover,.mods button[data-m="altshift"]:hover{background:color-mix(in srgb,var(--mc) 14%,var(--surface))}
+.mods button[data-m="shift"][aria-pressed="true"],.mods button[data-m="ctrl"][aria-pressed="true"],.mods button[data-m="alt"][aria-pressed="true"],.mods button[data-m="altshift"][aria-pressed="true"]{background:var(--mc);border-color:var(--mc);color:var(--bg)}
+.mods button[data-m="all"]{color:var(--ink);border-color:transparent;border-bottom:3px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--c-shift),var(--c-ctrl),var(--c-alt),var(--c-as)) border-box}
+.mods button[data-m="all"][aria-pressed="true"]{background:linear-gradient(90deg,var(--c-shift),var(--c-ctrl),var(--c-alt),var(--c-as)) border-box;color:var(--bg)}
+/* The key letter sits further back, and the text gets a thin outline in the face colour so it stays crisp on top */
+.key.stack .k{opacity:.09}
+.key:disabled .k,.key.n .k{opacity:.07}
+.key.stack .a,.key.stack .a span{text-shadow:-1px 0 var(--bg),1px 0 var(--bg),0 -1px var(--bg),0 1px var(--bg),0 0 5px var(--bg),0 0 9px var(--bg)}
 </style>
 </head>
 <body data-nav="setup">
 <div id="site-nav"></div>
 <div class="page">
-  <header>
-    <h1>My Setup</h1>
-    <p class="sub">Every key and the macro behind it. Pick a modifier to see what each key does, then select a key to read or copy its macro.</p>
-    <p class="stats" id="stats"></p>
+  <header class="phero">
+    <div class="ptxt">
+      <p class="kicker">Keyboard layout</p>
+      <h1>My Setup</h1>
+      <p class="sub">Every key and the macro behind it. Pick a modifier to see what each key does, then select a key to read or copy its macro.</p>
+    </div>
   </header>
 
+  <section class="stage">
   <div class="mods" id="mods" role="group" aria-label="Modifier held"></div>
+  <div class="stagegrid">
+  <div class="left">
   <div class="kbwrap" id="kbwrap" tabindex="0" aria-label="Keyboard">
     <div class="kb" id="kb"></div>
-    <div class="mouse"><span class="lbl">Mouse</span>
-      <button type="button" class="mm" id="mousemodel" aria-label="Mouse 4, the back side button">
-        <svg viewBox="-16 0 116 150" aria-hidden="true" focusable="false">
-          <path class="body" d="M50 4 C22 4 12 28 12 56 L12 100 C12 128 28 146 50 146 C72 146 88 128 88 100 L88 56 C88 28 78 4 50 4 Z"/>
-          <path class="seam" d="M50 4 V60 M12 60 H88"/>
-          <rect class="wheel" x="45" y="18" width="10" height="24" rx="5"/>
-          <rect class="side off" x="6" y="62" width="9" height="22" rx="3"/>
-          <rect class="side on" x="6" y="90" width="9" height="22" rx="3"/>
-          <text class="num" x="-4" y="77" text-anchor="middle">5</text>
-          <text class="num on" x="-4" y="105" text-anchor="middle">4</text>
-        </svg>
-      </button>
-      <div id="mouse"></div></div>
   </div>
   <div class="legend" id="legend" hidden>
     <span class="shift">Shift</span><span class="ctrl">Ctrl</span><span class="alt">Alt</span><span class="altshift">A+S = Alt + Shift</span>
   </div>
   <p class="hint" id="hint"></p>
 
-  <section class="panel" id="panel" aria-live="polite"></section>
+  </div>
+  <aside class="rail">
+  <section class="panel" id="panel" aria-live="polite" hidden></section>
+  <div class="mouse"><span class="lbl">Mouse</span>
+      <button type="button" class="mm" id="mousemodel" aria-label="Mouse 4, the back side button">
+        <svg viewBox="-16 0 116 150" aria-hidden="true" focusable="false">
+          <path class="body" d="M24 4 H76 L88 22 V118 L72 146 H28 L12 118 V22 Z"/>
+          <path class="seam" d="M50 4 V60 M12 60 H88"/>
+          <rect class="wheel" x="45" y="18" width="10" height="24"/>
+          <rect class="side off" x="6" y="62" width="9" height="22"/>
+          <rect class="side on" x="6" y="90" width="9" height="22"/>
+          <text class="num" x="-4" y="77" text-anchor="middle">5</text>
+          <text class="num on" x="-4" y="105" text-anchor="middle">4</text>
+        </svg>
+      </button>
+      <div id="mouse"></div></div>
+  </aside>
+  </div>
+  </section>
 
   <section class="all">
     <h3>All macros</h3>
@@ -514,6 +638,7 @@ function macroBlock(k){
 function keyEl(label,w,id){
   const e=M[id],b=el("button","key");b.style.setProperty("--w",w);b.type="button";
   b.append(el("span","k",label));
+  if(label.length>1)b.classList.add("lab");
   if(e){
     const lines=[],summary=[];
     const add=(cls,tag,text)=>{lines.push([cls,tag,text]);summary.push(tag+": "+text)};
@@ -532,6 +657,7 @@ function keyEl(label,w,id){
       for(const [cls,tag,text] of lines){const d=el("span","ln"+(cls==="base"?" base":""));d.append(el("span","tag "+cls,tag),el("span","tx "+cls,text));a.append(d)}
       b.append(a);
       b.setAttribute("aria-label",nameOf(id)+". "+summary.join(". "));
+      if(mod==="all")b.title=nameOf(id)+"\n"+summary.join("\n");
     }else{
       b.classList.add("n");
       b.setAttribute("aria-label",nameOf(id)+": nothing bound with "+LABEL[mod]);
@@ -543,7 +669,8 @@ function keyEl(label,w,id){
 
 function panel(){
   const p=document.getElementById("panel");p.replaceChildren();
-  const e=M[sel];p.hidden=!e;if(!e)return;
+  const e=M[sel];p.hidden=false;p.classList.toggle("empty",!e);
+  if(!e){p.append(el("p","pempty","Select a key to see everything it does and copy its macro."));return}
   const head=el("div","phead");
   const name=nameOf(sel);
   head.append(el("div","bigkey"+(name.length>2?" long":""),name));
@@ -561,6 +688,7 @@ function panel(){
   body.append(left);
   if(e.body)body.append(macroBlock(sel));
   p.append(body);
+  const x=el("button","pclose","Close");x.type="button";x.onclick=()=>{sel=null;render()};p.append(x);
 }
 
 const openKeys=new Set();
@@ -582,19 +710,25 @@ function allMacros(){
 
 function stats(){
   const lens=Object.values(M).filter(e=>e.body).map(e=>e.body.length);
-  document.getElementById("stats").textContent=lens.length+" macros, longest "+Math.max(...lens)+" of "+MAXLEN+" characters";}
+  const host=document.getElementById("stats");host.replaceChildren();
+  for(const [n,l] of [[lens.length,"macros"],[4,"modifier layers"],[Math.max(...lens),"longest, of "+MAXLEN]]){
+    const c=el("div","statchip");c.append(el("b",null,String(n)),el("span",null,l));host.append(c)}}
 
 function render(){
   const mb=document.getElementById("mods");mb.replaceChildren();
-  for(const [id,l] of MODS){const b=el("button",null,l);b.type="button";b.setAttribute("aria-pressed",id===mod);b.onclick=()=>{mod=id;render()};mb.append(b)}
+  for(const [id,l] of MODS){const b=el("button",null,l);b.type="button";b.dataset.m=id;b.setAttribute("aria-pressed",id===mod);b.onclick=()=>{mod=id;render()};mb.append(b)}
   const isAll=mod==="all";
-  document.getElementById("kbwrap").classList.add("all");
+  document.querySelector(".stage").classList.toggle("has-panel",!!M[sel]);
+  document.getElementById("kbwrap").classList.add("all");document.getElementById("kbwrap").dataset.mod=mod;document.querySelector(".stage").dataset.mod=mod;
   document.getElementById("legend").hidden=false;
   document.getElementById("hint").textContent=isAll
     ?"Each key lists everything it does, one line per modifier. Select a key for its macro, and select it again to close it. Scroll sideways to see the whole keyboard."
     :"Highlighted keys do something with this modifier. Faded keys do nothing. Select a key for its macro, and select it again to close it. Scroll sideways on a narrow screen.";
   const kb=document.getElementById("kb");kb.replaceChildren();
   for(const r of rows){const d=el("div","row");for(const [l,w] of r)d.append(keyEl(l,w,l));kb.append(d)}
+  const wrap=document.getElementById("kbwrap"),first=!window.__intro;
+  wrap.classList.toggle("intro",first);
+  if(first){window.__intro=true;kb.querySelectorAll(".key").forEach((k,i)=>k.style.setProperty("--i",i));setTimeout(()=>wrap.classList.remove("intro"),1500)}
   const ms=document.getElementById("mouse");const mk=keyEl("Mouse 4",1,"BUTTON4");ms.replaceChildren(mk);
   const mm=document.getElementById("mousemodel");
   mm.classList.toggle("sel",sel==="BUTTON4");mm.classList.toggle("dim",mk.classList.contains("n"));
@@ -604,7 +738,7 @@ function render(){
   allMacros();
 }
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&sel){sel=null;render()}});
-stats();render();
+render();
 </script>
 
 </body>

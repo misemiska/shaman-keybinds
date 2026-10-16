@@ -6,16 +6,42 @@
 <title>Miska's Shaman Macros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="site.css">
 </head>
 <body data-nav="home">
 <div id="site-nav"></div>
-<main class="wrap">
-  <h1>Miska's Shaman Macros</h1>
-  <p class="lead">Shaman macros and keybinds, collected from my Discord threads. Copy what you need.</p>
-  <div class="cards" id="cards"></div>
+<section class="hero">
+  <svg class="rings" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><rect x="1" y="1" width="398" height="398"/><rect x="17" y="17" width="366" height="366"/><rect x="33" y="33" width="334" height="334"/><rect x="49" y="49" width="302" height="302"/><rect x="65" y="65" width="270" height="270"/><rect x="81" y="81" width="238" height="238"/><rect x="97" y="97" width="206" height="206"/><rect x="113" y="113" width="174" height="174"/><rect x="129" y="129" width="142" height="142"/><rect x="145" y="145" width="110" height="110"/><rect x="161" y="161" width="78" height="78"/><rect x="177" y="177" width="46" height="46"/></svg>
+  <div class="in herogrid">
+    <div class="herotxt">
+      <p class="kicker">Shaman macros and keybinds</p>
+      <h1>Miska's Shaman <span class="dim">Macros.</span></h1>
+      <p class="lead">Collected from my Discord threads. Copy what you need.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#guides">Browse guides <span aria-hidden="true">↓</span></a>
+        <a class="btn ghost" href="setup.html">See my setup <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <aside class="featured" id="featured" aria-label="Featured macro"></aside>
+  </div>
+</section>
+
+<main class="explore" id="guides">
+  <div class="sechead"><h2>Pick a guide.</h2></div>
+  <div class="shell">
+    <div class="filters">
+      <label class="search">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search guides" autocomplete="off">
+      </label>
+      <div class="chipbar" id="chipbar" role="group" aria-label="Filter by topic"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <p class="nomatch" id="nomatch" hidden>No guides match that search.</p>
+  </div>
 </main>
+
 <div id="site-foot"></div>
 <script src="site.js"></script>
 </body>
