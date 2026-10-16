@@ -247,3 +247,9 @@ body::after{width:calc(min(100%,var(--max)) - 2*var(--pad))}
 .card::after{background:var(--hi)}
 .card::before{background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--hi) 16%,transparent),transparent 70%)}
 .card:hover,.card:focus-visible{box-shadow:0 14px 34px -18px var(--hi)}
+
+/* Callout: a blockquote in a guide is a warning, so it stands out from the text around it */
+.prose blockquote{position:relative;margin:0 0 30px;padding:20px 24px 20px 26px;border:1px solid color-mix(in srgb,var(--warn) 65%,var(--line));border-left:6px solid var(--warn);background:color-mix(in srgb,var(--warn) 13%,var(--surface));color:var(--ink);font-size:1.12em;line-height:1.5;max-width:70ch}
+.prose blockquote::before{content:"Please note";display:block;margin-bottom:8px;font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--warn)}
+.prose blockquote p{margin:0}
+.prose blockquote strong{color:var(--warn)}

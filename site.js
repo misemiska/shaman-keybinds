@@ -2,7 +2,7 @@
    To add a page, add one entry to PAGES and create its HTML file. */
 (function(){
   const SITE={
-    name:"Miska's Shaman Macros",
+    name:"Miska's Shaman Emporium",
     discord:{label:"#Miska's-Macro-Emprioum",url:"https://discord.com/channels/260297137554849794/1553074139055783956"}
   };
   const PAGES=[
@@ -11,6 +11,8 @@
     {id:"totem-recall",href:"totem-recall.html",label:"Totem Recall",title:"Totem Destroyed / Totemic Recall",desc:"One button that destroys all your totems, even while casting or in Ghost Wolf.",tags:["Totems"],md:"content/totem-recall.md",hue:"--c-ctrl"},
     {id:"weapon-imbues",href:"weapon-imbues.html",label:"Weapon Imbues",title:"Weapon Imbues",desc:"One macro for weapon imbues and sharpening stones.",tags:["Buffs"],md:"content/weapon-imbues.md",hue:"--c-alt"},
     {id:"ghost-wolf-mount",href:"ghost-wolf-mount.html",label:"Ghost Wolf and Mount",title:"Ghost Wolf and Mount",desc:"One button that picks Ghost Wolf or your mount for you.",tags:["Movement"],md:"content/ghost-wolf-mount.md",hue:"--c-as"},
+    {id:"shamanpower",href:"shamanpower.html",label:"ShamanPower",title:"ShamanPower Addon",desc:"The all-in-one totem addon I contribute to, and what it does.",tags:["Addon"],md:"content/shamanpower.md"},
+    {id:"weakauras",href:"weakauras.html",label:"WeakAuras",title:"My WeakAuras",desc:"The WeakAuras I built, and how they ended up in the addon.",tags:["WeakAuras"],md:"content/weakauras.md"},
     {id:"setup",href:"setup.html",label:"My Setup",title:"My Setup",desc:"My keyboard layout, with the macro behind every key.",tags:["Reference"],mock:"keys",hue:"--accent"}
   ];
   const MAXLEN=255;
@@ -61,7 +63,7 @@
     const host=document.getElementById("site-foot");if(!host)return;
     host.className="sitefoot";
     const inner=el("div","in"),grid=el("div","fgrid");
-    const brand=el("div");brand.append(el("p","fbrand",SITE.name),el("p","ftag","Shaman macros and keybinds, collected from my Discord threads."));
+    const brand=el("div");brand.append(el("p","fbrand",SITE.name),el("p","ftag","Shaman macros, keybinds and addons, collected from my Discord threads."));
     const guides=el("div"),gl=el("div","flist");guides.append(el("p","fh","Guides"),gl);
     for(const p of PAGES){if(p.id==="home")continue;const a=el("a",null,p.label);a.href=p.href;gl.append(a)}
     const com=el("div"),cl=el("div","flist");com.append(el("p","fh","Community"),cl);
