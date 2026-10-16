@@ -14,7 +14,7 @@
 .page{--pad:clamp(16px,3vw,48px);width:100%;max-width:var(--max);margin:0 auto;padding-block:32px 64px;padding-inline:var(--pad)}
 .phero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 48px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--line)}
 .phero .ptxt{min-width:0;flex:1 1 420px}
-.kicker{margin:0 0 10px;font:600 13px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.kicker{margin:0 0 10px;font:600 13px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--hi)}
 .phero h1{font:700 clamp(34px,4.2vw,58px)/1.02 var(--display);letter-spacing:-.01em;margin:0 0 10px;text-wrap:balance}
 h1{font:700 clamp(28px,5vw,40px)/1.1 var(--display);letter-spacing:.02em;margin:0 0 8px;text-wrap:balance}
 .sub{margin:0;color:var(--mute);max-width:62ch}
@@ -22,7 +22,7 @@ h1{font:700 clamp(28px,5vw,40px)/1.1 var(--display);letter-spacing:.02em;margin:
 .mods{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
 .mods{position:sticky;top:58px;z-index:6;margin-inline:calc(var(--pad) * -1);padding:10px var(--pad);background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .mods button{font:600 15px/1 var(--sans);padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:0;cursor:pointer}
-.mods button:hover{border-color:var(--accent)}
+.mods button:hover{border-color:var(--hi)}
 .mods button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 /* One scale for keyboard, mouse and details: the keys fill whatever width is left after the right-hand rail */
@@ -90,7 +90,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .mouse{display:grid;grid-template-columns:auto auto;grid-template-areas:"lbl lbl" "key mm";align-items:start;gap:6px 24px;flex:none}
 .mouse #mouse{grid-area:key}
 .mm{grid-area:mm;width:clamp(96px,calc(var(--u)*.7),140px);padding:6px 8px;border:1px solid var(--line);border-radius:0;background:var(--surface);cursor:pointer;line-height:0}
-.mm:hover{border-color:var(--accent)}
+.mm:hover{border-color:var(--hi)}
 .mm.sel{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent)}
 .mm svg{width:100%;height:auto;overflow:visible}
 .mm .body{fill:var(--raised);stroke:var(--mute);stroke-width:2}
@@ -110,7 +110,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .panel.empty{border-style:dashed;border-color:var(--line);color:var(--mute)}
 .pempty{margin:0;font-size:15px}
 .pclose{position:absolute;top:12px;right:14px;font:600 12px/1 var(--mono);letter-spacing:.06em;padding:7px 11px;border:1px solid var(--line);border-radius:0;background:transparent;color:var(--mute);cursor:pointer}
-.pclose:hover{border-color:var(--accent);color:var(--accent)}
+.pclose:hover{border-color:var(--hi);color:var(--hi)}
 
 
 
@@ -118,7 +118,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .bigkey{min-width:76px;height:76px;padding-inline:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent);border-bottom-width:4px;border-radius:0;background:var(--raised);font:700 30px/1 var(--display);color:var(--accent)}
 .bigkey.long{font-size:20px}
 .ptitle{min-width:0;flex:1 1 220px}
-.eyebrow{margin:0 0 2px;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.eyebrow{margin:0 0 2px;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--hi)}
 .ptitle h2{margin:0;font:700 22px/1.25 var(--display);letter-spacing:.01em;text-wrap:balance}
 .binds{display:grid;grid-template-columns:max-content 1fr;gap:0;margin:0 0 14px;border:1px solid var(--line);border-radius:0;overflow:hidden}
 .binds .r{display:contents}
@@ -170,7 +170,7 @@ details .macro{border:0;border-radius:0}
 .stage:not([data-mod="all"]) .key.stack .a{display:block}
 .stage:not([data-mod="all"]) .key.stack .tag{display:none}
 .key.b{box-shadow:0 0 0 0 transparent,inset 0 0 22px -14px var(--accent)}
-.key.b:hover{box-shadow:0 12px 28px -14px var(--accent),inset 0 0 22px -12px var(--accent)}
+.key.b:hover{box-shadow:0 12px 28px -14px var(--hi),inset 0 0 22px -12px var(--hi)}
 @media (prefers-reduced-motion:no-preference){
   .key.b:hover{transform:translateY(-3px)}
   .key.sel{animation:keypulse 2.2s ease-in-out infinite}
@@ -194,12 +194,12 @@ details .macro{border:0;border-radius:0}
 .key.b{--tm:22%;--face:linear-gradient(color-mix(in srgb,var(--accent) 12%,var(--surface)),color-mix(in srgb,var(--accent) 5%,var(--surface)))}
 .key.n,.key:disabled{--tm:0%}
 .key.b,.key.n,.key.b:hover,.key.sel{background:var(--face)}
-.key.b:hover{--face:linear-gradient(var(--accent-soft),color-mix(in srgb,var(--accent) 8%,var(--surface)))}
+.key.b:hover{--face:linear-gradient(var(--accent-soft),color-mix(in srgb,var(--hi) 8%,var(--surface)))}
 .key.sel{--face:linear-gradient(var(--accent-soft),color-mix(in srgb,var(--accent) 10%,var(--surface)))}
 .key.b:active{border-width:8px 9px 11px 9px;padding-bottom:6px}
 /* Slightly rounded, with a little depth: a hard under-edge and a soft shadow beneath */
 .key,.key.b,.key.n{border-radius:6px;box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 14px -7px rgba(0,0,0,.55),inset 0 1px 0 color-mix(in srgb,#fff 16%,transparent)}
-.key.b:hover{box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 16px -6px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 1px 0 color-mix(in srgb,#fff 20%,transparent)}
+.key.b:hover{box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 16px -6px color-mix(in srgb,var(--hi) 55%,transparent),inset 0 1px 0 color-mix(in srgb,#fff 20%,transparent)}
 .key.sel,.key.b.sel{box-shadow:0 0 0 2px var(--accent),0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 14px -7px rgba(0,0,0,.55)}
 .key.b:active{box-shadow:0 1px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 3px 8px -4px rgba(0,0,0,.5);transform:translateY(3px)}
 /* All view: keys keep a keyboard-like height. Each action sits on one line (the base action may use two) and the full text is on hover and in the panel. */
@@ -231,12 +231,89 @@ details .macro{border:0;border-radius:0}
 .mods button[data-m="shift"],.mods button[data-m="ctrl"],.mods button[data-m="alt"],.mods button[data-m="altshift"]{color:var(--mc);border-color:color-mix(in srgb,var(--mc) 55%,var(--line));border-bottom:3px solid var(--mc)}
 .mods button[data-m="shift"]:hover,.mods button[data-m="ctrl"]:hover,.mods button[data-m="alt"]:hover,.mods button[data-m="altshift"]:hover{background:color-mix(in srgb,var(--mc) 14%,var(--surface))}
 .mods button[data-m="shift"][aria-pressed="true"],.mods button[data-m="ctrl"][aria-pressed="true"],.mods button[data-m="alt"][aria-pressed="true"],.mods button[data-m="altshift"][aria-pressed="true"]{background:var(--mc);border-color:var(--mc);color:var(--bg)}
-.mods button[data-m="all"]{color:var(--ink);border-color:transparent;border-bottom:3px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--c-shift),var(--c-ctrl),var(--c-alt),var(--c-as)) border-box}
-.mods button[data-m="all"][aria-pressed="true"]{background:linear-gradient(90deg,var(--c-shift),var(--c-ctrl),var(--c-alt),var(--c-as)) border-box;color:var(--bg)}
 /* The key letter sits further back, and the text gets a thin outline in the face colour so it stays crisp on top */
 .key.stack .k{opacity:.09}
 .key:disabled .k,.key.n .k{opacity:.07}
 .key.stack .a,.key.stack .a span{text-shadow:-1px 0 var(--bg),1px 0 var(--bg),0 -1px var(--bg),0 1px var(--bg),0 0 5px var(--bg),0 0 9px var(--bg)}
+/* WoW item quality colours: Poor grey = Base, Common white = Shift, Uncommon green = Ctrl, Rare blue = Alt, Epic purple = Alt + Shift, Legendary orange = All */
+:root{
+  --c-base:#7a7a7a; --c-shift:#454a52; --c-ctrl:#3f7d36; --c-alt:#3a679f; --c-as:#74489f; --c-all:#b46a2c;
+  --x-base:#4f4f4f; --x-shift:#1c2026; --x-ctrl:#2b5a25; --x-alt:#254a78; --x-as:#52307a; --x-all:#7c4818;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --c-base:#a0a0a0; --c-shift:#ece9e4; --c-ctrl:#74c26a; --c-alt:#6199d6; --c-as:#a77ed6; --c-all:#dc9658;
+    --x-base:#d0d0d0; --x-shift:#f6f3ee; --x-ctrl:#b9e3b2; --x-alt:#b0cdee; --x-as:#d4bcee; --x-all:#efc596;
+  }
+}
+:root[data-theme="dark"]{
+  --c-base:#a0a0a0; --c-shift:#ece9e4; --c-ctrl:#74c26a; --c-alt:#6199d6; --c-as:#a77ed6; --c-all:#dc9658;
+  --x-base:#d0d0d0; --x-shift:#f6f3ee; --x-ctrl:#b9e3b2; --x-alt:#b0cdee; --x-as:#d4bcee; --x-all:#efc596;
+}
+.stage[data-mod="none"]{--mod:var(--c-base)}
+.stage[data-mod="shift"]{--mod:var(--c-shift)}
+.stage[data-mod="ctrl"]{--mod:var(--c-ctrl)}
+.stage[data-mod="alt"]{--mod:var(--c-alt)}
+.stage[data-mod="altshift"]{--mod:var(--c-as)}
+.stage[data-mod="all"]{--mod:var(--c-all)}
+.stage{--mod:var(--c-base)}
+
+/* keys and the mouse card take the colour of the chosen modifier */
+.stage .key.b{--tint:var(--mod);--tm:44%;
+  --face:linear-gradient(color-mix(in srgb,var(--tint) 9%,var(--surface)),color-mix(in srgb,var(--tint) 3%,var(--surface)))}
+.stage .key.b:hover{--face:linear-gradient(color-mix(in srgb,var(--tint) 20%,var(--surface)),color-mix(in srgb,var(--tint) 8%,var(--surface)))}
+.stage .key.sel,.stage .key.b.sel{--face:linear-gradient(color-mix(in srgb,var(--tint) 24%,var(--surface)),color-mix(in srgb,var(--tint) 10%,var(--surface)))}
+.stage .key.sel,.stage .key.b.sel{box-shadow:0 0 0 2px var(--mod),0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 14px -7px rgba(0,0,0,.55)}
+.stage .key.b .k{color:var(--mod)}
+.stage .key.stack .ln.base .tag{color:var(--c-base)}
+.tx.base{color:var(--x-base)}
+.tag.base{color:var(--c-base)}
+.tx.shift{color:var(--x-shift)}
+.tag.altshift{color:var(--c-as)}
+
+/* panel, big key and mouse follow the same colour */
+.panel{border-color:color-mix(in srgb,var(--mod) 55%,var(--line))}
+.bigkey{border-color:var(--mod);color:var(--mod)}
+.binds .r.on dt{color:var(--mod)}
+.binds .r.on dt,.binds .r.on dd{background:color-mix(in srgb,var(--mod) 14%,var(--surface))}
+.mm .side.on{fill:var(--mod);stroke:var(--mod)}
+.mm .num.on{fill:var(--mod)}
+
+/* tabs: Base and All join the coloured set */
+.mods button[data-m="none"]{--mc:var(--c-base)}
+.mods button[data-m="all"]{--mc:var(--c-all)}
+.mods button[data-m="none"],.mods button[data-m="all"]{color:var(--mc);border-color:color-mix(in srgb,var(--mc) 55%,var(--line));border-bottom:3px solid var(--mc);background:var(--surface)}
+.mods button[data-m="none"]:hover,.mods button[data-m="all"]:hover{background:color-mix(in srgb,var(--mc) 14%,var(--surface))}
+.mods button[data-m="none"][aria-pressed="true"],.mods button[data-m="all"][aria-pressed="true"]{background:var(--mc);border-color:var(--mc);color:var(--bg)}
+.mods button[data-m="shift"][aria-pressed="true"]{color:var(--bg)}
+.legend .base{color:var(--c-base)}
+/* Keycap fronts and the mouse body use the neutral surface, so the deep container blue doesn't make them look saturated */
+.stage .key{--raised:color-mix(in srgb,var(--surface) 88%,var(--ink))}
+.mm .body{fill:var(--surface)}
+/* The big key in the detail panel: a plain mono keycap label instead of the wide display font, which drew an odd Q */
+.bigkey{min-width:84px;height:84px;padding-inline:12px;font:700 36px/1 var(--mono);letter-spacing:0;color:var(--mod);background:linear-gradient(var(--raised),var(--surface));border:1px solid color-mix(in srgb,var(--mod) 60%,var(--line));border-bottom-width:5px;border-radius:6px;box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),inset 0 1px 0 color-mix(in srgb,#fff 14%,transparent)}
+.bigkey.long{font-size:20px}
+.stage .bigkey{--raised:color-mix(in srgb,var(--surface) 88%,var(--ink))}
+.binds dt{background:color-mix(in srgb,var(--surface) 82%,var(--bg))}
+/* Hover on My Setup uses the tan highlight too */
+.stage .key.b:hover{box-shadow:0 4px 0 -1px color-mix(in srgb,#000 40%,var(--bg)),0 9px 16px -6px color-mix(in srgb,var(--hi) 55%,transparent),inset 0 1px 0 color-mix(in srgb,#fff 20%,transparent),0 0 0 1px var(--hi)}
+.stage .key.b:hover .k{color:var(--hi)}
+.pclose:hover{border-color:var(--hi);color:var(--hi)}
+.mm:hover{border-color:var(--hi)}
+/* All macros list: rows react to hover, and the open one is marked */
+details{transition:border-color .15s,background-color .15s}
+details:hover{border-color:var(--hi)}
+summary{transition:background-color .15s}
+summary:hover{background:color-mix(in srgb,var(--hi) 12%,var(--surface))}
+summary:hover .kk{color:var(--hi)}
+summary:focus-visible{outline:2px solid var(--hi);outline-offset:-2px}
+summary::after{content:"+";flex:none;margin-left:6px;font:500 20px/1 var(--mono);color:var(--mute);transition:transform .2s,color .15s}
+summary:hover::after{color:var(--hi)}
+details[open]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+details[open] summary{background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
+details[open] summary .kk{color:var(--accent)}
+details[open] summary::after{content:"−";color:var(--accent)}
+details[open]:hover{border-color:var(--hi)}
 </style>
 </head>
 <body data-nav="setup">
@@ -258,7 +335,7 @@ details .macro{border:0;border-radius:0}
     <div class="kb" id="kb"></div>
   </div>
   <div class="legend" id="legend" hidden>
-    <span class="shift">Shift</span><span class="ctrl">Ctrl</span><span class="alt">Alt</span><span class="altshift">A+S = Alt + Shift</span>
+    <span class="base">Base</span><span class="shift">Shift</span><span class="ctrl">Ctrl</span><span class="alt">Alt</span><span class="altshift">A+S = Alt + Shift</span>
   </div>
   <p class="hint" id="hint"></p>
 

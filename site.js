@@ -89,32 +89,7 @@
       if(!calm)a.addEventListener("pointermove",ev=>{
         const r=a.getBoundingClientRect();
         a.style.setProperty("--mx",(ev.clientX-r.left)+"px");a.style.setProperty("--my",(ev.clientY-r.top)+"px")});
-      host.append(a)}
-    /* search box and tag chips */
-    const q=document.getElementById("q"),bar=document.getElementById("chipbar"),none=document.getElementById("nomatch");
-    if(!q||!bar)return;
-    const tags=[...new Set(list.flatMap(p=>p.tags||[]))];let active="All";
-    const apply=()=>{
-      const term=q.value.trim().toLowerCase();let shown=0;
-      host.querySelectorAll(".card").forEach(c=>{
-        const ok=(active==="All"||c.dataset.tags.split(" ").includes(active))&&(!term||c.dataset.text.includes(term));
-        c.hidden=!ok;if(ok)shown++});
-      if(none)none.hidden=shown>0};
-    for(const t of ["All",...tags]){
-      const bt=el("button","fchip",t);bt.type="button";bt.setAttribute("aria-pressed",String(t===active));
-      bt.onclick=()=>{active=t;bar.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===bt)));apply()};
-      bar.append(bt)}
-    q.addEventListener("input",apply)}
-
-  /* Featured macro in the home hero, taken from the first guide so it never goes stale */
-  function featured(){
-    const host=document.getElementById("featured");if(!host)return;
-    const first=PAGES.find(p=>p.md);if(!first)return;
-    fetch(first.md).then(r=>r.ok?r.text():"").then(md=>{
-      const m=md.match(/\*\*([^*\n]+)\*\*\s*\n```[^\n]*\n([\s\S]*?)```/);if(!m)return;
-      host.append(el("p","eyebrow","Featured macro"),el("h2",null,m[1]),macroBox(m[2]));
-      const link=el("a","flink","Read the guide →");link.href=first.href;host.append(link);
-      }).catch(()=>{})}
+      host.append(a)}}
 
   /* Sections fade up as they scroll into view. Skipped for reduced motion, and the effect removes itself once finished. */
   function reveal(){
@@ -276,5 +251,5 @@
       hero.style.setProperty("--mx",(ev.clientX-r.left)+"px");
       hero.style.setProperty("--my",(ev.clientY-r.top)+"px")})}
 
-  nav();foot();cards();featured();side();guide();glow();reveal();
+  nav();foot();cards();side();guide();glow();reveal();
 })();
