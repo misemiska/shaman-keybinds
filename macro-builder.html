@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Macro Builder &middot; Miska's Shaman Emporium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-nav="macro-builder">
+<div id="site-nav"></div>
+<main class="docwrap">
+  <aside class="side" id="side"></aside>
+  <div class="docmain">
+  <h1>Macro Builder</h1>
+  <p class="lead">Build a targeting macro, and see in plain words how it reads.</p>
+  <p class="lead mb-lead">A macro is a short list of instructions the game runs when you press a button. Build one below and watch how each part works, then scroll down to learn the rules behind it.</p>
+    <div data-widget="macro-builder"></div>
+    <section class="learn prose" id="learn">
+      <h2>How macros work</h2>
+
+      <h3>What a macro is</h3>
+      <p>A macro is a short list of commands that the game runs, from top to bottom, when you press its button. Most useful macros are only one or two lines long. You write them in the macro window, which you open with <code>/m</code>, then drag the finished macro onto your action bar like a spell.</p>
+      <pre class="eg">#showtooltip
+/cast Healing Wave</pre>
+      <p><code>#showtooltip</code> makes the button show the spell's icon. <code>/cast Healing Wave</code> casts the spell on your current target. On its own that is no better than dragging the spell to your bar, so the interesting part is the conditions.</p>
+
+      <h3>Conditions make it smart</h3>
+      <p>Put conditions in square brackets before a spell name. The spell is only used if everything inside the brackets is true right now.</p>
+      <pre class="eg">/cast [help] Healing Wave; Lightning Bolt</pre>
+      <p>Read it as: if your target is friendly, cast Healing Wave. Otherwise cast Lightning Bolt. The semicolon separates the choices. The macro goes through them from left to right, uses the first one that fits, and ignores the rest.</p>
+      <ul>
+        <li><strong>The last choice is the "otherwise".</strong> A spell with no brackets always fits, so put one at the end if you want a fallback. Without one, the button does nothing when no choice fits.</li>
+        <li><strong>One press casts one spell.</strong> Only the first choice that fits is used, so the order of your choices matters.</li>
+      </ul>
+
+      <h3>Aim it with @</h3>
+      <p>By default the conditions look at your target. Write <code>@</code> and a unit to look at, and cast at, someone else. <code>@mouseover</code> is the unit under your mouse, <code>@focus</code> is your focus, <code>@targettarget</code> is whoever your target is targeting, and <code>@player</code> is you.</p>
+      <pre class="eg">/cast [@mouseover,help,nodead] Healing Wave</pre>
+      <p>The words after the <code>@</code> are more conditions on that unit, separated by commas, and all of them must be true. <code>help</code> means friendly, <code>harm</code> means an enemy, <code>nodead</code> means alive and <code>dead</code> means dead.</p>
+      <p>Put two brackets side by side, like <code>[@mouseover,help][help]</code>, and either one is enough. That is how a smart healing macro tries one unit after another.</p>
+
+      <h3>Keys and situations</h3>
+      <p><code>mod:shift</code>, <code>mod:ctrl</code> and <code>mod:alt</code> check which key you are holding, so one button can do several jobs. <code>combat</code>, <code>swimming</code> and <code>indoors</code> check the situation you are in.</p>
+      <pre class="eg">/cast [mod:shift] Earth Shock(Rank 1); Earth Shock</pre>
+      <p>Hold Shift for the cheap lower rank, or press normally for your highest rank. Same button, two uses.</p>
+
+      <h2>Why they are worth it</h2>
+      <p>Each of these starts a macro in the builder above. Open one, hover over its rules, and change something to see what happens.</p>
+      <div class="exgrid">
+        <a class="ex" href="#heal-purge"><h4>One button, two jobs</h4><p>Heal friends and purge enemies on the same key. It saves a button and keeps your hand where it is.</p><span class="go">Try it in the builder &uarr;</span></a>
+        <a class="ex" href="#smart-heal"><h4>Heal without clicking</h4><p>Heal whoever your mouse is over, then your target, your focus, or the target of the enemy you are fighting.</p><span class="go">Try it in the builder &uarr;</span></a>
+        <a class="ex" href="#shock"><h4>Spend less mana</h4><p>Hold Shift to cast a cheaper, lower rank of the same spell, for interrupts or when you are low on mana.</p><span class="go">Try it in the builder &uarr;</span></a>
+        <a class="ex" href="#resurrect"><h4>Handle the living and the dead</h4><p>Hold Shift to resurrect a fallen player. Without it, the same button heals the living.</p><span class="go">Try it in the builder &uarr;</span></a>
+      </div>
+
+      <h2>Good to know</h2>
+      <ul>
+        <li><strong>The limit is 255 characters.</strong> Long spell names and many conditions add up. The counter above warns you when you are close.</li>
+        <li><strong><code>#showtooltip</code> goes first.</strong> On its own it shows the spell the macro would cast right now, so the icon changes as your conditions do.</li>
+        <li><strong>If nothing happens, no choice fit.</strong> Check the order, and add a spell with no conditions at the end if you want a fallback.</li>
+        <li><strong>Try a new macro on a friendly player or a training dummy</strong> before you rely on it in a fight.</li>
+      </ul>
+    </section>
+
+  </div>
+</main>
+<div id="site-foot"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
