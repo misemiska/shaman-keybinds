@@ -14,6 +14,7 @@
     {id:"totem-recall",group:"macros",href:"totem-recall.html",label:"Totem Recall",title:"Totem Destroyed / Totemic Recall",desc:"One button that destroys all your totems, even while casting or in Ghost Wolf.",tags:["Totems"],md:"content/totem-recall.md",hue:"--c-ctrl"},
     {id:"weapon-imbues",group:"macros",href:"weapon-imbues.html",label:"Weapon Imbues",title:"Weapon Imbues",desc:"One macro for weapon imbues and sharpening stones.",tags:["Buffs"],md:"content/weapon-imbues.md",hue:"--c-alt"},
     {id:"ghost-wolf-mount",group:"macros",href:"ghost-wolf-mount.html",label:"Ghost Wolf and Mount",title:"Ghost Wolf and Mount",desc:"One button that picks Ghost Wolf or your mount for you.",tags:["Movement"],md:"content/ghost-wolf-mount.md",hue:"--c-as"},
+    {id:"leveling-build",href:"leveling-build.html",label:"Leveling Build",title:"Leveling Build",desc:"My talent order from level 10 to 60, for leveling and dungeons.",tags:["Build"],md:"content/leveling-build.md"},
     {id:"shamanpower",href:"shamanpower.html",label:"ShamanPower",title:"ShamanPower Addon",desc:"The all-in-one totem addon I contribute to, and what it does.",tags:["Addon"],md:"content/shamanpower.md"},
     {id:"weakauras",href:"weakauras.html",label:"WeakAuras",title:"My WeakAuras",desc:"The WeakAuras I built, and how they ended up in the addon.",tags:["WeakAuras"],md:"content/weakauras.md"},
     {id:"setup",href:"setup.html",label:"My Setup",title:"My Setup",desc:"My keyboard layout, with the macro behind every key.",tags:["Reference"],mock:"keys",hue:"--accent"}
@@ -361,6 +362,230 @@
       if(p&&scroll)root.scrollIntoView({behavior:calm?"auto":"smooth",block:"start"})};
     fromHash(false);window.addEventListener("hashchange",()=>fromHash(true))}
 
+  /* Pictures in a guide open full size in an overlay. Click, the close button or Esc closes it. */
+  function lightbox(host){
+    host.querySelectorAll("img").forEach(img=>{
+      const btn=el("button","zoom");btn.type="button";btn.setAttribute("aria-label","Open the picture larger: "+(img.alt||"picture"));
+      img.replaceWith(btn);btn.append(img);
+      btn.addEventListener("click",()=>{
+        const ov=el("div","lightbox");ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label",img.alt||"Picture");
+        const big=el("img");big.src=img.currentSrc||img.src;big.alt=img.alt||"";
+        const bar=el("div","lbbar"),close=el("button","lbclose","Close");close.type="button";
+        const open=el("a","lbopen","Open in a new tab");open.href=big.src;open.target="_blank";open.rel="noopener";
+        bar.append(el("span","lbhint","Click anywhere or press Esc to close"),open,close);
+        ov.append(bar,big);document.body.append(ov);document.documentElement.classList.add("lbon");close.focus();
+        const done=()=>{ov.remove();document.documentElement.classList.remove("lbon");document.removeEventListener("keydown",key);btn.focus()};
+        const key=ev=>{if(ev.key==="Escape")done()};
+        document.addEventListener("keydown",key);
+        ov.addEventListener("click",ev=>{if(ev.target!==open)done()});
+        close.addEventListener("click",ev=>{ev.stopPropagation();done()})})})}
+
+  /* The talent calculator: the page's own tables are the steps. Scrolling (or the slider) sets a level and the trees show the points spent by then. */
+  function talentCalc(host){
+    const marker=host.querySelector('[data-widget="talent-calc"]');if(!marker)return;
+    marker.remove();
+    const SRC="images/leveling-talents.png",W=1397,H=626,ICON=48,PX={el:0,en:468,re:935},CX=[118,193,268,343],RY=[113,188,262,337,411,487,562];
+    const TREES=[{id:"el",name:"Elemental",hx:31.5},{id:"en",name:"Enhancement",hx:499.5},{id:"re",name:"Restoration",hx:966.5}];
+    /* [tree, column, row, name, most ranks]. A node with no name is one this build never uses. */
+    const N=(t,c,r,name,max)=>({t,c,r,name:name||null,max:max||0});
+    const NODES=[
+      N("el",1,0,"Convection",5),N("el",2,0,"Concussion",5),
+      N("el",0,1,"Elemental Devastation",3),N("el",1,1),N("el",2,1),N("el",3,1,"Call of Flame",3),
+      N("el",0,2,"Elemental Focus",1),N("el",1,2),
+      N("el",0,3,"Trial by Fire",2),N("el",1,3),N("el",3,3),
+      N("el",0,4),N("el",1,4),N("el",2,4),N("el",2,5),N("el",1,6),
+      N("en",0,0),N("en",1,0,"Thundering Strikes",5),N("en",2,0),
+      N("en",0,1),N("en",1,1,"Mental Dexterity",3),N("en",2,1,"Improved Ghost Wolf",2),N("en",3,1,"Improved Lightning Shield",3),
+      N("en",0,2,"Elemental Weapons",3),N("en",2,2,"Shamanistic Focus",1),N("en",3,2,"Anticipation",3),
+      N("en",0,3),N("en",1,3,"Flurry",5),N("en",2,3,"Stormstrike",1),
+      N("en",0,4,"Spirit Weapons",1),N("en",1,4),N("en",2,4,"Improved Stormstrike",2),
+      N("en",2,5),N("en",1,6),
+      N("re",1,0),N("re",2,0,"Tidal Focus",5),
+      N("re",0,1,"Mindfulness",3),N("re",1,1),N("re",2,1),N("re",3,1),
+      N("re",0,2),N("re",1,2),N("re",2,2),
+      N("re",0,3),N("re",1,3),N("re",2,3),
+      N("re",1,4),N("re",2,4),N("re",2,5),N("re",1,6)];
+    const BYNAME={};NODES.forEach(n=>{if(n.name)BYNAME[n.name]=n});
+
+    /* the steps are the rows of the tables on this page */
+    const steps=[];
+    host.querySelectorAll("table tbody tr").forEach(tr=>{
+      const td=[...tr.children].map(x=>x.textContent.trim());if(td.length<3)return;
+      const lv=td[0].match(/^(\d+)(?:\s+to\s+(\d+))?$/),rk=td[2].match(/^(\d+)(?:\s+to\s+(\d+))?$/),node=BYNAME[td[1]];
+      if(!lv||!rk||!node)return;
+      const a=+lv[1],b=+(lv[2]||lv[1]),r1=+rk[1],r2=+(rk[2]||rk[1]);
+      const st={tr,node,a,b,n:b-a+1,r1,r2};steps.push(st);tr.classList.add("step");});
+    if(!steps.length)return;
+    const first=steps[0].a,last=steps[steps.length-1].b,TOTAL=51;
+    const rankAt=(node,L)=>{let r=0;for(const s of steps){if(s.node!==node||L<s.a)continue;r=L>=s.b?s.r2:s.r1+(L-s.a)}return r};
+
+    /* build the trees */
+    const root=el("div","tcalc");
+    const head=el("div","tc-head");
+    const lvl=el("div","tc-level"),lvN=el("b",null,String(first));lvl.append(el("span",null,"Level"),lvN);
+    const pts=el("div","tc-pts"),ptN=el("b",null,"1");pts.append(el("span",null,"Points spent"),ptN,document.createTextNode(" / "+TOTAL));
+    const sl=el("input");sl.type="range";sl.id="tc-slider";sl.min=String(first);sl.max=String(last);sl.step="1";sl.value=String(first);
+    sl.setAttribute("aria-label","Character level");
+    head.append(lvl,pts,sl);
+    const trees=el("div","tc-trees"),treeEls={};
+    for(const t of TREES){
+      const box=el("section","tc-tree"),h=el("header","tc-th"),ic=el("span","tc-ti");
+      ic.style.setProperty("--bx",String(t.hx-21));ic.style.setProperty("--by","4");
+      const nm=el("span","tc-tn",t.name),cnt=el("span","tc-tc","0/51");
+      h.append(ic,nm,cnt);
+      const grid=el("div","tc-grid");
+      box.append(h,grid);trees.append(box);treeEls[t.id]={cnt,grid,pts:0}}
+    for(const n of NODES){
+      const d=el("div","tn"+(n.name?"":" un")),icon=el("span","tn-ic");
+      d.style.gridColumn=String(n.c+1);d.style.gridRow=String(n.r+1);
+      d.style.setProperty("--bx",String(PX[n.t]+CX[n.c]-ICON/2));d.style.setProperty("--by",String(RY[n.r]-ICON/2));
+      d.append(icon);
+      if(n.name){const bd=el("span","tn-bd","0/"+n.max);d.append(bd);n.bd=bd;d.setAttribute("aria-label",n.name)}
+      else d.title="Not used in this build";
+      n.el=d;treeEls[n.t].grid.append(d)}
+    const hint=el("p","tc-hint","Scroll down or drag the slider. Gold means all ranks are taken, green means some.");
+    root.append(head,trees,hint);
+    const wrap=el("div","tcols"),left=el("div","tleft"),right=el("aside","tright");
+    right.setAttribute("aria-label","Talent calculator");
+    [...host.children].forEach(c=>left.append(c));
+    right.append(root);wrap.append(left,right);host.append(wrap);
+
+    /* Each section with a table stays pinned in place while the page scrolls through a runway of 46 pixels per level.
+       The table does not grow. The scrolling happens beneath it, and the level follows how far through the runway you are. */
+    const RUN_PX=46,pins=[];
+    left.querySelectorAll(".sec").forEach(sec=>{
+      const rows=steps.filter(s=>sec.contains(s.tr));if(!rows.length)return;
+      const a=Math.min(...rows.map(s=>s.a)),b=Math.max(...rows.map(s=>s.b)),w=el("div","pinwrap");
+      sec.parentNode.insertBefore(w,sec);w.append(sec);
+      pins.push({w,sec,a,b,m:b-a+1,run:(b-a+1)*RUN_PX,pt:76})});
+    /* The last section needs enough page beneath it to be scrolled all the way through its runway, and to keep the trees on screen
+       until it is done. Tall windows need extra, because the footer is not tall enough to push the page far enough. */
+    const layoutPins=()=>{
+      for(const p of pins){
+        const h=p.sec.offsetHeight;
+        p.pt=Math.min(76,window.innerHeight-h-16);
+        p.sec.style.top=p.pt+"px";p.w.style.height=(h+p.run)+"px"}
+      const last=pins[pins.length-1];if(!last)return;
+      const h=last.sec.offsetHeight,wr=last.w.getBoundingClientRect();
+      const trailing=document.documentElement.scrollHeight-(wr.bottom+window.scrollY);
+      const toEnd=window.innerHeight-h-last.pt-trailing;
+      const forTrees=76+root.offsetHeight+16-(last.pt+h);
+      last.w.style.height=(h+last.run+Math.max(0,toEnd,forTrees))+"px"};
+    layoutPins();
+    window.addEventListener("resize",layoutPins);
+    if("ResizeObserver" in window){const ro=new ResizeObserver(layoutPins);pins.forEach(p=>ro.observe(p.sec));ro.observe(root)}
+
+    /* size the nodes to the width and height that are available */
+    const fit=()=>{
+      const w=root.clientWidth||600,g=14;
+      const byW=((w-32-2*g)/3-22)/5.3,byH=(window.innerHeight-300)/10;
+      const n=Math.max(24,Math.min(62,byW,byH));
+      root.style.setProperty("--n",n.toFixed(1)+"px");root.style.setProperty("--s",(n/ICON).toFixed(4))};
+    root.style.setProperty("--W",String(W));root.style.setProperty("--H",String(H));
+    fit();
+    if("ResizeObserver" in window)new ResizeObserver(fit).observe(root);window.addEventListener("resize",fit);
+
+    /* show a level */
+    let shown=-1;const prev=new Map();
+    const draw=L=>{
+      if(L===shown)return;shown=L;
+      const sum={el:0,en:0,re:0};
+      for(const n of NODES){
+        if(!n.name)continue;
+        const r=rankAt(n,L);sum[n.t]+=r;
+        const was=prev.get(n);prev.set(n,r);
+        n.el.classList.toggle("on",r>0);n.el.classList.toggle("full",r>0&&r===n.max);
+        n.bd.textContent=r+"/"+n.max;
+        n.el.title=n.name+", rank "+r+" of "+n.max;
+        if(!calm&&was!==undefined&&r>was){n.el.classList.remove("pop");void n.el.offsetWidth;n.el.classList.add("pop")}}
+      let total=0;
+      for(const t of TREES){treeEls[t.id].cnt.textContent=sum[t.id]+"/51";total+=sum[t.id]}
+      ptN.textContent=String(total);lvN.textContent=String(L);sl.value=String(L);
+      for(const s of steps){
+        s.tr.classList.toggle("done",L>=s.b);
+        s.tr.classList.toggle("now",L>=s.a&&L<s.b);
+        s.tr.classList.toggle("next",L<s.a);
+        s.tr.style.setProperty("--rp",String(L>=s.b?1:L>=s.a?(L-s.a+1)/s.n:0))}};
+
+    /* scrolling picks the level: the row under the middle of the window is "now", and its points fill in as you pass through it */
+    /* The target level comes from the pinned sections. Once a section is pinned, its levels follow the scroll through its runway.
+       The trees then walk to that level one at a time, so even a fast scroll plays through every level. */
+    const levelFromScroll=()=>{
+      let L=first;
+      for(const p of pins){
+        const r=p.w.getBoundingClientRect();
+        if(r.top>p.pt)break;
+        const prog=Math.max(0,Math.min(1,(p.pt-r.top)/p.run));
+        L=p.a+Math.min(p.m-1,Math.floor(prog*p.m))}
+      return L};
+    let disp=first,target=first,timer=null,lockUntil=0;
+    const gap=()=>{const d=Math.abs(target-disp);return d>14?45:d>6?80:150};
+    const tick=()=>{
+      timer=null;if(disp===target)return;
+      disp+=target>disp?1:-1;draw(disp);
+      if(disp!==target)timer=setTimeout(tick,gap())};
+    const go=L=>{
+      target=L;
+      if(calm){disp=L;draw(L);return}
+      if(!timer&&disp!==target)timer=setTimeout(tick,0)};
+    let queued=false;
+    const onScroll=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(Date.now()>lockUntil)go(levelFromScroll())})};
+    window.addEventListener("scroll",onScroll,{passive:true});window.addEventListener("resize",onScroll);
+
+    /* the slider sets the level right away, and scrolls the page to the row for that level */
+    sl.addEventListener("input",()=>{
+      const L=+sl.value;
+      clearTimeout(timer);timer=null;disp=target=L;draw(L);
+      lockUntil=Date.now()+700;
+      const p0=pins.find(x=>L>=x.a&&L<=x.b);let t=0;
+      if(L>first&&p0){const r=p0.w.getBoundingClientRect(),prog=(L-p0.a+0.5)/p0.m;t=r.top+window.scrollY-p0.pt+prog*p0.run}
+      window.scrollTo({top:Math.max(0,t),behavior:"auto"})});
+
+    /* Elemental Devastation and Call of Flame can be taken in either order. A switch in the text swaps them in the table and in the trees. */
+    const swapMarker=left.querySelector('[data-widget="swap-order"]');
+    const edNode=BYNAME["Elemental Devastation"],cofNode=BYNAME["Call of Flame"];
+    if(swapMarker&&edNode&&cofNode){
+      const pair=steps.filter(s=>s.node===edNode||s.node===cofNode).sort((x,y)=>x.a-y.a);
+      let acc=0;const blk1=[],blk2=[];
+      for(const s of pair){if(acc<edNode.max){blk1.push(s);acc+=s.n}else blk2.push(s)}
+      const ok=edNode.max===cofNode.max&&acc===edNode.max&&blk2.reduce((n,s)=>n+s.n,0)===cofNode.max;
+      if(!ok){swapMarker.remove()}
+      else{
+        const setRows=(first,second)=>{
+          for(const [blk,node] of [[blk1,first],[blk2,second]]){
+            let k=0;
+            for(const s of blk){s.node=node;s.r1=k+1;s.r2=k+s.n;k+=s.n}}};
+        const paint=s=>{
+          s.tr.children[1].textContent=s.node.name;
+          s.tr.children[2].textContent=s.r1===s.r2?String(s.r1):s.r1+" to "+s.r2};
+        let current="ed";
+        const box=el("div","swapbox"),lab=el("span","swl","Take first"),seg=el("div","swseg");
+        seg.setAttribute("role","group");seg.setAttribute("aria-label","Which talent to take first");
+        const mk=(id,text)=>{const b=el("button",null,text);b.type="button";b.dataset.v=id;b.setAttribute("aria-pressed",String(id===current));
+          b.onclick=()=>choose(id);seg.append(b);return b};
+        const bED=mk("ed","Elemental Devastation"),bCOF=mk("cof","Call of Flame");
+        const arrows=el("span","swic","\u21C4");arrows.setAttribute("aria-hidden","true");
+        box.append(lab,seg,arrows);
+        const live=el("span","swlive");live.setAttribute("aria-live","polite");box.append(live);
+        swapMarker.replaceWith(box);
+        const choose=id=>{
+          if(id===current)return;
+          current=id;
+          for(const b of seg.children)b.setAttribute("aria-pressed",String(b.dataset.v===id));
+          const first=id==="ed"?edNode:cofNode,second=id==="ed"?cofNode:edNode;
+          live.textContent=first.name+" first";
+          setRows(first,second);
+          const refresh=()=>{shown=-1;draw(disp)};
+          if(calm){pair.forEach(paint);refresh();return}
+          pair.forEach((s,i)=>{
+            for(const td of [s.tr.children[1],s.tr.children[2]]){
+              td.style.animationDelay=(i*90)+"ms";td.classList.remove("flip");void td.offsetWidth;td.classList.add("flip")}
+            setTimeout(()=>paint(s),300+i*90)});
+          setTimeout(refresh,300);
+          for(const n of [edNode,cofNode]){n.el.classList.remove("swp");void n.el.offsetWidth;n.el.classList.add("swp")}
+          setTimeout(()=>{for(const s of pair)for(const td of [s.tr.children[1],s.tr.children[2]])td.classList.remove("flip");for(const n of [edNode,cofNode])n.el.classList.remove("swp")},1100)}}}
+    disp=target=levelFromScroll();draw(disp)}
+
   /* Sidebar on guide pages: the sections of this guide, then every guide */
   function side(){
     const host=document.getElementById("side");if(!host)return;
@@ -478,6 +703,8 @@
     const heads=[...host.querySelectorAll("h2,h3")],used={};
     heads.forEach(h=>{let id=slug(h.textContent)||"section";if(used[id])id+="-"+(++used[id]);else used[id]=1;h.id=id});
     const secs=sectionize(host);
+    lightbox(host);
+    talentCalc(host);
     stepCards(host);
     dimTitle();
     pager();
