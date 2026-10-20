@@ -392,33 +392,33 @@ html.lbon{overflow:hidden}
 .tleft tbody tr.step.now td{background:color-mix(in srgb,var(--hi) 14%,transparent);opacity:1}
 .tleft tbody tr.step.now td:first-child{box-shadow:inset 3px 0 0 var(--hi)}
 .tleft tbody tr.step.done td{opacity:1}
-.tcalc{--n:56px;--s:1.1667;padding:16px;border:1px solid var(--line);background:#0e1317;color:#e9ecee}
+.tcalc{--n:56px;--s:1.1667;padding:16px;border:1px solid var(--line);background:var(--tc-bg);color:var(--tc-fg)}
 .tc-head{display:grid;grid-template-columns:auto auto minmax(120px,1fr);align-items:center;gap:8px 22px;margin-bottom:14px}
-.tc-level span,.tc-pts span{display:block;margin-bottom:4px;font:600 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#8ca1a8}
+.tc-level span,.tc-pts span{display:block;margin-bottom:4px;font:600 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--tc-mute)}
 .tc-level b{font:700 38px/1 var(--mono);color:var(--hi)}
-.tc-pts{font:500 14px/1 var(--mono);color:#a3aeac}
-.tc-pts b{font:700 26px/1 var(--mono);color:#e9ecee}
+.tc-pts{font:500 14px/1 var(--mono);color:var(--tc-mute2)}
+.tc-pts b{font:700 26px/1 var(--mono);color:var(--tc-fg)}
 .tc-head input[type=range]{width:100%;accent-color:var(--hi);cursor:pointer}
 .tc-trees{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.tc-tree{min-width:0;overflow:hidden;padding:10px 10px 14px;border:1px solid #27333a;background:#131a1f}
+.tc-tree{min-width:0;overflow:hidden;padding:10px 10px 14px;border:1px solid var(--tc-line);background:var(--tc-tree)}
 .tc-th{display:flex;align-items:center;gap:7px;margin-bottom:12px;font:700 13px/1 var(--sans)}
 .tc-ti{flex:none;width:28px;height:28px;border-radius:50%;background:url(images/leveling-talents.png) no-repeat;background-size:calc(1397px*28/42) auto;background-position:calc(var(--bx)*-28px/42) calc(var(--by)*-28px/42)}
-.tc-tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e9ecee}
-.tc-tc{flex:none;font:600 11px/1 var(--mono);color:#a3aeac}
+.tc-tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tc-fg)}
+.tc-tc{flex:none;font:600 11px/1 var(--mono);color:var(--tc-mute2)}
 .tc-grid{display:grid;grid-template-columns:repeat(4,var(--n));grid-template-rows:repeat(7,var(--n));gap:calc(var(--n)*.42);justify-content:center}
 .tn{position:relative;width:var(--n);height:var(--n)}
-.tn-ic{position:absolute;inset:0;background:url(images/leveling-talents.png) no-repeat;background-size:calc(var(--s)*1397px) calc(var(--s)*626px);background-position:calc(var(--s)*var(--bx)*-1px) calc(var(--s)*var(--by)*-1px);filter:grayscale(1) brightness(.55);transition:filter .25s}
-.tn::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px #2c353b;pointer-events:none;transition:box-shadow .25s}
-.tn.un .tn-ic{filter:grayscale(1) brightness(.5);opacity:.85}
+.tn-ic{position:absolute;inset:0;background:url(images/leveling-talents.png) no-repeat;background-size:calc(var(--s)*1397px) calc(var(--s)*626px);background-position:calc(var(--s)*var(--bx)*-1px) calc(var(--s)*var(--by)*-1px);filter:var(--tc-off);transition:filter .25s}
+.tn::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px var(--tc-node);pointer-events:none;transition:box-shadow .25s}
+.tn.un .tn-ic{filter:var(--tc-off);opacity:.8}
 .tn.on .tn-ic{filter:none}
-.tn.on::after{box-shadow:inset 0 0 0 2px #22b30a}
-.tn.on.full::after{box-shadow:inset 0 0 0 2px #f0c30c}
-.tn-bd{position:absolute;right:-3px;bottom:-5px;min-width:30px;padding:2px 4px;border:1px solid #000;background:#000;font:700 11px/1.1 var(--mono);color:#7e8a90;text-align:center;z-index:1}
-.tn.on .tn-bd{color:#3fe01f}
-.tn.on.full .tn-bd{color:#f0c30c}
+.tn.on::after{box-shadow:inset 0 0 0 2px var(--tc-green)}
+.tn.on.full::after{box-shadow:inset 0 0 0 2px var(--tc-gold)}
+.tn-bd{position:absolute;right:-3px;bottom:-5px;min-width:30px;padding:2px 4px;border:1px solid var(--tc-bdline);background:var(--tc-badge);font:700 11px/1.1 var(--mono);color:var(--tc-bdtext);text-align:center;z-index:1}
+.tn.on .tn-bd{color:var(--tc-gtext)}
+.tn.on.full .tn-bd{color:var(--tc-gold)}
 .tn.pop{animation:tnpop .6s ease}
 @keyframes tnpop{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--hi) 80%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
-.tc-hint{margin:14px 0 0;color:#8ca1a8;font-size:13px}
+.tc-hint{margin:14px 0 0;color:var(--tc-mute);font-size:13px}
 @media (max-width:1100px){.tcols{grid-template-columns:minmax(0,1fr)}.tright{position:static;order:-1}.tleft{padding-bottom:0}}
 
 @media (max-width:1700px){.tcols{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}.tn-bd{min-width:24px;padding:1px 3px;font-size:10px}}
@@ -447,3 +447,22 @@ html.lbon{overflow:hidden}
 /* Pinned sections: the section stays put while the page scrolls through its runway */
 .pinwrap{position:relative}
 .pinwrap>.sec{position:sticky;margin-top:0;padding-top:28px;border-top:1px solid var(--line)}
+
+/* Talent calculator colours: a dark game-style window in dark mode, a light parchment one in light mode */
+:root{
+  --tc-bg:#f7f3ed;--tc-fg:#1c2325;--tc-mute:#5b6668;--tc-mute2:#6a7576;--tc-tree:#fbf9f6;--tc-line:#d5ccbe;--tc-node:#cdc3b3;
+  --tc-green:#2f9a14;--tc-gold:#c99700;--tc-bdtext:#6a7576;--tc-gtext:#1f7a0b;--tc-badge:#fbf9f6;--tc-bdline:#cdc3b3;
+  --tc-off:grayscale(1) contrast(.8) brightness(1.18) opacity(.55);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tc-bg:#0e1317;--tc-fg:#e9ecee;--tc-mute:#8ca1a8;--tc-mute2:#a3aeac;--tc-tree:#131a1f;--tc-line:#27333a;--tc-node:#2c353b;
+    --tc-green:#22b30a;--tc-gold:#f0c30c;--tc-bdtext:#7e8a90;--tc-gtext:#3fe01f;--tc-badge:#000;--tc-bdline:#000;
+    --tc-off:grayscale(1) brightness(.55);
+  }
+}
+:root[data-theme="dark"]{
+  --tc-bg:#0e1317;--tc-fg:#e9ecee;--tc-mute:#8ca1a8;--tc-mute2:#a3aeac;--tc-tree:#131a1f;--tc-line:#27333a;--tc-node:#2c353b;
+  --tc-green:#22b30a;--tc-gold:#f0c30c;--tc-bdtext:#7e8a90;--tc-gtext:#3fe01f;--tc-badge:#000;--tc-bdline:#000;
+  --tc-off:grayscale(1) brightness(.55);
+}
