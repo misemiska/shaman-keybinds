@@ -384,18 +384,18 @@
   function talentCalc(host){
     const marker=host.querySelector('[data-widget="talent-calc"]');if(!marker)return;
     marker.remove();
-    const SRC="images/leveling-talents.png",W=1397,H=626,ICON=48,PX={el:0,en:468,re:935},CX=[118,193,268,343],RY=[113,188,262,337,411,487,562];
-    const TREES=[{id:"el",name:"Elemental",hx:31.5},{id:"en",name:"Enhancement",hx:499.5},{id:"re",name:"Restoration",hx:966.5}];
+    const SRC="images/leveling-talents.png",W=867,H=510,ICON=40,PX={el:0,en:287,re:573},CX=[55,116,177,237],RY=[96,156,216,276,336,396,456];
+    const TREES=[{id:"el",name:"Elemental",hx:14},{id:"en",name:"Enhancement",hx:300},{id:"re",name:"Restoration",hx:586}];
     /* [tree, column, row, name, most ranks]. A node with no name is one this build never uses. */
     const N=(t,c,r,name,max)=>({t,c,r,name:name||null,max:max||0});
     const NODES=[
-      N("el",1,0,"Convection",5),N("el",2,0,"Concussion",5),
-      N("el",0,1,"Elemental Devastation",3),N("el",1,1),N("el",2,1),N("el",3,1,"Call of Flame",3),
+      N("el",1,0),N("el",2,0,"Concussion",5),
+      N("el",0,1,"Elemental Devastation",3),N("el",1,1,"Reverberation",5),N("el",2,1),N("el",3,1,"Call of Flame",3),
       N("el",0,2,"Elemental Focus",1),N("el",1,2),
       N("el",0,3,"Trial by Fire",2),N("el",1,3),N("el",3,3),
       N("el",0,4),N("el",1,4),N("el",2,4),N("el",2,5),N("el",1,6),
       N("en",0,0),N("en",1,0,"Thundering Strikes",5),N("en",2,0),
-      N("en",0,1),N("en",1,1,"Mental Dexterity",3),N("en",2,1,"Improved Ghost Wolf",2),N("en",3,1,"Improved Lightning Shield",3),
+      N("en",0,1),N("en",1,1,"Mental Dexterity",3),N("en",2,1,"Improved Ghost Wolf",2),N("en",3,1),
       N("en",0,2,"Elemental Weapons",3),N("en",2,2,"Shamanistic Focus",1),N("en",3,2,"Anticipation",3),
       N("en",0,3),N("en",1,3,"Flurry",5),N("en",2,3,"Stormstrike",1),
       N("en",0,4,"Spirit Weapons",1),N("en",1,4),N("en",2,4,"Improved Stormstrike",2),
@@ -430,7 +430,7 @@
     const trees=el("div","tc-trees"),treeEls={};
     for(const t of TREES){
       const box=el("section","tc-tree"),h=el("header","tc-th"),ic=el("span","tc-ti");
-      ic.style.setProperty("--bx",String(t.hx-21));ic.style.setProperty("--by","4");
+      ic.style.setProperty("--bx",String(t.hx));ic.style.setProperty("--by","8");
       const nm=el("span","tc-tn",t.name),cnt=el("span","tc-tc","0/51");
       h.append(ic,nm,cnt);
       const grid=el("div","tc-grid");
@@ -558,7 +558,7 @@
         const paint=s=>{
           s.tr.children[1].textContent=s.node.name;
           s.tr.children[2].textContent=s.r1===s.r2?String(s.r1):s.r1+" to "+s.r2};
-        let current="ed";
+        let current=pair[0].node===edNode?"ed":"cof";
         const box=el("div","swapbox"),lab=el("span","swl","Take first"),seg=el("div","swseg");
         seg.setAttribute("role","group");seg.setAttribute("aria-label","Which talent to take first");
         const mk=(id,text)=>{const b=el("button",null,text);b.type="button";b.dataset.v=id;b.setAttribute("aria-pressed",String(id===current));
