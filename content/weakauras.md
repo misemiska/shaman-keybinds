@@ -3,7 +3,7 @@
 ### What these are
 These are the WeakAuras I have built for shamans, published on Wago.
 
-**[Browse my WeakAuras on Wago](https://wago.io/p/miska)**
+**[Browse my WeakAuras on Wago](https://wago.io/p/miska.)**
 
 Many of them have already been adapted into [ShamanPower](shamanpower.html), so some of what you see there started life as one of these auras.
 
