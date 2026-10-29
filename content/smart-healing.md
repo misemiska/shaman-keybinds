@@ -17,28 +17,28 @@ In the macro, each check is one set of square brackets. The `@` part says who it
 **Your target's target**
 ```
 #showtooltip
-/cast [@targettarget,help,nodead] Healing Wave
+/use [@targettarget,help,nodead] Healing Wave
 ```
 **Mouseover**
 ```
 #showtooltip
-/cast [@mouseover,help,nodead] Healing Wave
+/use [@mouseover,help,nodead] Healing Wave
 ```
 **Your focus**
 ```
 #showtooltip
-/cast [@focus,help,nodead] Healing Wave
+/use [@focus,help,nodead] Healing Wave
 ```
 **Your focus's target**
 ```
 #showtooltip
-/cast [@focustarget,help,nodead] Healing Wave
+/use [@focustarget,help,nodead] Healing Wave
 ```
 
 **All of them together**
 ```
 #showtooltip
-/cast [@mouseover,help,nodead][@target,help,nodead][@focus,help,nodead][@targettarget,help,nodead][@focustarget,help,nodead][@player] Healing Wave
+/use [@mouseover,help,nodead][@target,help,nodead][@focus,help,nodead][@targettarget,help,nodead][@focustarget,help,nodead][@player] Healing Wave
 ```
 
 They cast your highest rank of Healing Wave.

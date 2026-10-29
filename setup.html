@@ -639,7 +639,7 @@ const M={
 "<": {
 "d": "Totemic Recall + destroy all totems",
 "c": [],
-"body": "/run for i=1,4 do local n=\"t\"..i;_G[n]=CreateFrame(\"Button\",n,UIParent,\"SecureUnitButtonTemplate\");_G[n]:SetAttribute(\"type\",\"destroytotem\");_G[n]:SetAttribute(\"totem-slot\",i) end\n/cast [noform:1] Totemic Recall\n/click t1\n/click t2\n/click t3\n/click t4"
+"body": "/run for i=1,4 do local n=\"t\"..i;_G[n]=CreateFrame(\"Button\",n,UIParent,\"SecureUnitButtonTemplate\");_G[n]:SetAttribute(\"type\",\"destroytotem\");_G[n]:SetAttribute(\"totem-slot\",i) end\n/use [noform:1] Totemic Recall\n/click t1\n/click t2\n/click t3\n/click t4"
 },
 "BUTTON4": {
 "d": "Horn of the Dire Wolf",

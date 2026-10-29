@@ -148,27 +148,32 @@
   function macroBuilder(){
     const root=document.querySelector('[data-widget="macro-builder"]');if(!root)return;
     root.className="builder wide";
-    const UNITS=[["target","Your target"],["mouseover","Mouseover"],["focus","Your focus"],["targettarget","Your target's target"],["focustarget","Your focus's target"],["player","Yourself"],["cursor","The spot under your mouse"]];
+    const UNITS=[["target","Your target"],["mouseover","Mouseover"],["focus","Your focus"],["targettarget","Your target's target"],["focustarget","Your focus's target"],["player","Yourself"],["cursor","The spot under your mouse"],["none","Nobody (@none)"]];
     const WHO=[["fa","Friendly and alive"],["f","Friendly (alive or dead)"],["fd","Friendly and dead"],["ea","Enemy and alive"],["e","Enemy (alive or dead)"],["any","Anyone"]];
     const KEYS=[["","No key needed"],["nomod","No key held"],["shift","Shift"],["ctrl","Ctrl"],["alt","Alt"],["altshift","Alt + Shift"],["ctrlshift","Ctrl + Shift"]];
     const WHEN=[["","Any time"],["combat","In combat"],["nocombat","Out of combat"],["swimming","Swimming"],["indoors","Indoors"],["outdoors","Outdoors"]];
-    const AT={target:"",mouseover:"@mouseover",focus:"@focus",targettarget:"@targettarget",focustarget:"@focustarget",player:"@player",cursor:"@cursor"};
+    const AT={target:"",mouseover:"@mouseover",focus:"@focus",targettarget:"@targettarget",focustarget:"@focustarget",player:"@player",cursor:"@cursor",none:"@none"};
     const WHOC={fa:["help","nodead"],f:["help"],fd:["help","dead"],ea:["harm","nodead"],e:["harm"],any:[]};
-    const NOUN={target:"your target",mouseover:"the unit under your mouse",focus:"your focus",targettarget:"your target's target",focustarget:"your focus's target",player:"you",cursor:"the spot under your mouse"};
-    const ON={target:"on your target",mouseover:"on the unit under your mouse",focus:"on your focus",targettarget:"on your target's target",focustarget:"on your focus's target",player:"on you",cursor:"at the spot under your mouse"};
+    /* the keys each choice needs held, for the order check: mod:shift also fits while Alt and Shift are held */
+    const KEYM={shift:["shift"],ctrl:["ctrl"],alt:["alt"],altshift:["alt","shift"],ctrlshift:["ctrl","shift"]};
+    const NOUN={target:"your target",mouseover:"the unit under your mouse",focus:"your focus",targettarget:"your target's target",focustarget:"your focus's target",player:"you",cursor:"the spot under your mouse",none:"nobody"};
+    const ON={target:"on your target",mouseover:"on the unit under your mouse",focus:"on your focus",targettarget:"on your target's target",focustarget:"on your focus's target",player:"on you",cursor:"at the spot under your mouse",none:"with no target picked for it"};
     const EXISTS={mouseover:"there is a unit under your mouse",focus:"you have a focus set",targettarget:"your target has a target",focustarget:"your focus has a target"};
     const WHOP={fa:"is friendly and alive",f:"is friendly",fd:"is friendly and dead",ea:"is an enemy and alive",e:"is an enemy"};
     const KEYP={nomod:"you are holding no key",shift:"you are holding Shift",ctrl:"you are holding Ctrl",alt:"you are holding Alt",altshift:"you are holding Alt and Shift",ctrlshift:"you are holding Ctrl and Shift"};
+    /* the mouse button: btn:1 is a left click, btn:2 a right click */
+    const BTNS=[["","Any button"],["1","Left click"],["2","Right click"]],BTNP={"1":"you click with the left mouse button","2":"you click with the right mouse button"};
     const WHENP={combat:"you are in combat",nocombat:"you are out of combat",swimming:"you are swimming",indoors:"you are indoors",outdoors:"you are outdoors"};
     /* the glossary: what each piece of a macro means */
     const KEYN={shift:"Shift",ctrl:"Ctrl",alt:"Alt",altshift:"Alt and Shift",ctrlshift:"Ctrl and Shift"};
     const GLOSS={
+      "#show":["cmd","Makes the button show the icon of the spell the macro would cast right now. It is 7 characters shorter than #showtooltip."],
       "#showtooltip":["cmd","Makes the button show the icon and tooltip of the spell the macro would cast right now. It must be the first line."],
       "/startattack":["cmd","Starts your auto-attack on your target."],
-      "/cast":["cmd","The command that casts a spell."],
-      "/use":["cmd","The command that uses a spell or an item. For spells it works the same as /cast."],
+      "/use":["cmd","The command that casts a spell or uses an item. It does exactly the same as /cast, and it is one letter shorter."],
       "[ ]":["sym","Square brackets hold conditions. Everything inside one pair must be true for that choice to be used."],
       "][":["sym","Two bracket pairs side by side mean \u201cor\u201d. The spell is cast if either pair is true, checked from left to right."],
+      ",":["sym","A comma inside brackets means \u201cand\u201d. Every condition in the brackets must be true."],
       ";":["sym","A semicolon separates different spells. The macro tries them from left to right and uses the first one that fits."],
       "@mouseover":["unit","Aim at the unit under your mouse. The other conditions in the same brackets are checked on that unit."],
       "@focus":["unit","Aim at your focus, the second target you set with /focus."],
@@ -176,10 +181,22 @@
       "@focustarget":["unit","Aim at whoever your focus is targeting."],
       "@player":["unit","Aim at yourself."],
       "@cursor":["unit","Aim at the spot under your mouse, for spells you place on the ground."],
+      "/dismount":["cmd","Gets you off your mount."],
+      "/cancelform":["cmd","Cancels your shapeshift form. For a Shaman that is Ghost Wolf."],
+      "/stopmacro":["cmd","Stops the macro: the lines after it don't run."],
+      "/stopcasting":["cmd","Stops the spell you are casting."],
+      "/stopattack":["cmd","Stops your auto-attack."],
+      "/cancelaura":["cmd","Removes the buff named after it from you."],
+      "/click":["cmd","Clicks the button named after it."],
+      "/run":["cmd","Runs a piece of Lua code."],
+      "@none":["unit","Pick no target for the spell. Auto self-cast is skipped, and a spell that needs a target lets you click one."],
+      "btn:1":["key","You must click the button with the left mouse button."],
+      "btn:2":["key","You must click the button with the right mouse button. A key binding counts as a left click."],
       "help":["flt","The unit must be friendly."],
       "harm":["flt","The unit must be an enemy."],
       "nodead":["flt","The unit must be alive."],
       "dead":["flt","The unit must be dead."],
+      "exists":["flt","Someone must be there: a unit under your mouse, a focus that is set, and so on. Without it the rule fits even when nobody is there, and the rules after it are never tried."],
       "nomod":["key","No modifier key (Shift, Ctrl or Alt) may be held."],
       "combat":["sit","You must be in combat."],
       "nocombat":["sit","You must be out of combat."],
@@ -187,72 +204,359 @@
       "indoors":["sit","You must be indoors."],
       "outdoors":["sit","You must be outdoors."],
       "spell":["spell","The spell to cast. Adding (Rank 3), for example, picks a specific rank. Leave it off for your highest."]};
-    for(const k in KEYN)GLOSS["mod:"+k]=["key","You must be holding "+KEYN[k]+"."];
+    GLOSS["mod"]=["key","You must be holding Shift, Ctrl or Alt. Any of them will do."];
+    for(const k in KEYN)GLOSS["nomod:"+k]=["key","You must not be holding "+KEYN[k]+(KEYM[k].length>1?" together":"")+". The “no” in front turns the condition around."];
+    for(const k in KEYN)GLOSS["mod:"+k]=["key","You must be holding "+KEYN[k]+"."+(KEYM[k].length>1?" Joining the key names means both at once.":" It also fits while you hold another key with it, so a rule that needs two keys has to come first.")];
 
-    const rule=(o)=>Object.assign({on:true,spell:"Healing Wave",rank:"",unit:"target",who:"fa",key:"",when:""},o);
+    /* what the builder knows about Shaman spells in WoW: Forever and TBC, for the checks:
+       friend = a friendly, living unit; res = a friendly, dead one; enemy = an enemy; ground = placed on the ground;
+       self = always goes on you; none = takes no target at all (totems drop at your feet, Fire Nova erupts at your Fire totem).
+       Ranks are not checked: each version has its own rank tables. */
+    const SPELLS={},SPELLN=[];
+    const know=(t,list)=>list.split("|").forEach(n=>{SPELLS[n.toLowerCase()]={n,t};SPELLN.push(n)});
+    know("friend","Healing Wave|Lesser Healing Wave|Chain Heal|Riptide|Earth Shield|Cure Poison|Cure Disease|Water Breathing|Water Walking");
+    know("res","Ancestral Spirit");
+    know("enemy","Lightning Bolt|Chain Lightning|Lava Burst|Earth Shock|Flame Shock|Frost Shock|Purge|Stormstrike");
+    know("ground","Totemic Projection");
+    know("self","Lightning Shield|Water Shield|Ghost Wolf|Nature's Swiftness|Elemental Mastery|Shamanistic Rage|Rage of the Farseer|Astral Recall|"+
+      "Rockbiter Weapon|Flametongue Weapon|Frostbrand Weapon|Windfury Weapon");
+    know("none","Fire Nova|Totemic Recall|Totemic Call|Call of the Elements|Call of the Ancestors|Call of the Spirits|Bloodlust|Heroism|"+
+      "Strength of Earth Totem|Stoneskin Totem|Tremor Totem|Earthbind Totem|Stoneclaw Totem|Earth Elemental Totem|Totem of Wrath|Searing Totem|Magma Totem|Fire Nova Totem|"+
+      "Flametongue Totem|Frost Resistance Totem|Fire Elemental Totem|Mana Spring Totem|Healing Stream Totem|Mana Tide Totem|Poison Cleansing Totem|Disease Cleansing Totem|"+
+      "Fire Resistance Totem|Windfury Totem|Grace of Air Totem|Wrath of Air Totem|Tranquil Air Totem|Grounding Totem|Nature Resistance Totem|Windwall Totem|Sentry Totem");
+
+    const rule=(o)=>Object.assign({on:true,spell:"Healing Wave",rank:"",unit:"target",who:"fa",key:"",btn:"",when:"",known:""},o);
+    /* known: takes a spell name or ID as typed, any spell, not only the one cast; a comma, ; or bracket would end the condition */
+    const knownOf=r=>(typeof r.known==="string"?r.known:"").replace(/[\r\n;\[\],]/g,"").trim();
+    const knownName=x=>/^\d+$/.test(x)?"the spell with ID "+x:x;
     const heal=(unit,who)=>rule({unit,who:who||"fa"});
     const PRESETS=[
-      {id:"smart-heal",name:"Smart healing",opts:{tip:true,attack:"off",cmd:"cast"},rules:()=>[heal("mouseover"),heal("target"),heal("focus"),heal("targettarget"),heal("focustarget"),heal("player","any")]},
-      {id:"shock",name:"Shock, rank 1 on Shift",opts:{tip:true,attack:"always",cmd:"use"},rules:()=>[rule({spell:"Earth Shock",rank:"1",who:"any",key:"shift"}),rule({spell:"Earth Shock",who:"any"})]},
-      {id:"heal-purge",name:"Heal friends, purge enemies",opts:{tip:true,attack:"off",cmd:"use"},rules:()=>[rule({spell:"Lesser Healing Wave",unit:"target"}),rule({spell:"Lesser Healing Wave",unit:"mouseover"}),rule({spell:"Purge",unit:"target",who:"ea"}),rule({spell:"Purge",unit:"mouseover",who:"ea"})]},
-      {id:"resurrect",name:"Resurrect on Shift, heal otherwise",opts:{tip:true,attack:"off",cmd:"use"},rules:()=>[rule({spell:"Ancestral Spirit",unit:"mouseover",who:"fd",key:"shift"}),rule({spell:"Ancestral Spirit",unit:"target",who:"fd",key:"shift"}),heal("mouseover"),heal("target")]}];
+      {id:"smart-heal",name:"Smart healing",opts:{tip:"show",attack:"off"},rules:()=>[heal("mouseover"),heal("target"),heal("focus"),heal("targettarget"),heal("focustarget"),heal("player","any")]},
+      {id:"shock",name:"Shock, rank 1 on Shift",opts:{tip:"show",attack:"always"},rules:()=>[rule({spell:"Earth Shock",rank:"1",who:"any",key:"shift"}),rule({spell:"Earth Shock",who:"any"})]},
+      {id:"heal-purge",name:"Heal friends, purge enemies",opts:{tip:"show",attack:"off"},rules:()=>[rule({spell:"Lesser Healing Wave",unit:"target"}),rule({spell:"Lesser Healing Wave",unit:"mouseover"}),rule({spell:"Purge",unit:"target",who:"ea"}),rule({spell:"Purge",unit:"mouseover",who:"ea"})]},
+      {id:"resurrect",name:"Resurrect on Shift, heal otherwise",opts:{tip:"show",attack:"off"},rules:()=>[rule({spell:"Ancestral Spirit",unit:"mouseover",who:"fd",key:"shift"}),rule({spell:"Ancestral Spirit",unit:"target",who:"fd",key:"shift"}),heal("mouseover"),heal("target")]}];
 
     let rules=PRESETS[0].rules(),opts=Object.assign({},PRESETS[0].opts),uid=0;
+    /* the macro's lines in order: MAIN is the /use line the rules build, the rest are kept as written ({text}) */
+    const MAIN={main:true};let lines=[MAIN];
     const ids=new WeakMap();const idOf=r=>{if(!ids.has(r))ids.set(r,++uid);return ids.get(r)};
 
     /* ---- the macro being edited sits at the top */
-    const out=liveMacro(),warn=el("p","bwarn");warn.hidden=true;
-    const head=el("div","bhead");head.append(out.box,warn);
+    const out=liveMacro(),warn=el("p","bwarn"),bad=el("p","bwarn");warn.hidden=bad.hidden=true;
+    const head=el("div","bhead");head.append(out.box,warn,bad);
+    const dl=el("datalist");dl.id="mb-spells";for(const n of SPELLN)dl.append(el("option",null,n));
 
     /* ---- options and presets */
-    const tip=el("input");tip.type="checkbox";tip.id="mb-tip";
-    const tipL=el("label","bcheck");tipL.htmlFor="mb-tip";tipL.append(tip,document.createTextNode(" Show the spell's icon on the button"));
+    /* the first line: nothing, #show (the icon) or #showtooltip (the icon and the tooltip); opts.tip is "", "show" or "showtooltip" */
+    const TIPS=[["","Nothing"],["show","Icon (#show)"],["showtooltip","Icon and tooltip (#showtooltip)"]];
+    const tipG=el("div","segs");tipG.setAttribute("role","group");tipG.setAttribute("aria-label","Show on the button");
+    const tipBtns=TIPS.map(([v,t])=>{const b=el("button","bpre",t);b.type="button";b.onclick=()=>{opts.tip=v;syncTip();update()};tipG.append(b);return b});
+    const syncTip=()=>tipBtns.forEach((b,i)=>b.setAttribute("aria-pressed",String(TIPS[i][0]===opts.tip)));
+    /* what the two lines do, popping up while you hover over the buttons or reach them with the keyboard */
+    const tipHelp=el("span","btip");tipHelp.id="mb-tip-help";tipHelp.setAttribute("role","tooltip");tipG.setAttribute("aria-describedby",tipHelp.id);
+    tipHelp.append(el("code",null,"#show"),document.createTextNode(" makes the button show the icon of the spell the macro would cast right now. It changes as you hold a key or change targets, so with Shift held you see the Shift spell. "),
+      el("code",null,"#showtooltip"),document.createTextNode(" does the same and also shows that spell's tooltip when you hover over the button. It costs 13 of your 255 characters, "),
+      el("code",null,"#show"),document.createTextNode(" only 6. Either way, pick the red question-mark icon when you save the macro in the game, or the button keeps the icon you picked instead."));
     const mkSel=(id,list,val)=>{const s=el("select");s.id=id;for(const [v,l] of list){const o=el("option",null,l);o.value=v;if(v===val)o.selected=true;s.append(o)}return s};
-    const atk=mkSel("mb-atk",[["off","Never"],["nomod","Only with no key held"],["always","Always"]],opts.attack);
-    const cmd=mkSel("mb-cmd",[["cast","/cast"],["use","/use"]],opts.cmd);
-    const fld=(label,ctrl,cls)=>{const f=el("div","bfield"+(cls?" "+cls:"")),l=el("label",null,label);l.htmlFor=ctrl.id;f.append(l,ctrl);return f};
+    /* /startattack takes conditions too. You switch on each way of pressing the button that should start auto-attack
+       (no key, Shift, Alt + Shift ...), and the builder writes the shortest condition that fits exactly those.
+       opts.atk is a bit mask over ATKS: none on = no /startattack line, all on = no condition. */
+    const ATKS=[["none","No key"],["shift","Shift"],["ctrl","Ctrl"],["alt","Alt"],["altshift","Alt + Shift"],["ctrlshift","Ctrl + Shift"]];
+    const ATKALL=(1<<ATKS.length)-1,KEYK=Object.keys(KEYN);
+    /* which of those presses a key name fits: mod:shift fits Shift, Alt + Shift and Ctrl + Shift */
+    const fitsOf=x=>ATKS.reduce((m,[s],i)=>s!=="none"&&KEYM[x].every(k=>KEYM[s].includes(k))?m|1<<i:m,0);
+    /* only forms players have confirmed in game: [mod], [nomod], mod: with one key or a joined pair (mod:altshift),
+       nomod: with one key, and commas to need several at once. No slash lists like [nomod:ctrl/alt]: nobody reports testing them.
+       So one pair of brackets is: nomod, or an optional mod / mod:x followed by any of nomod:shift, nomod:ctrl, nomod:alt. */
+    const ONE=["shift","ctrl","alt"];
+    const BR=[{t:["nomod"],c:1}];
+    for(const p of [null,"mod"].concat(KEYK))for(let b=0;b<8;b++){
+      const no=ONE.filter((_,i)=>b>>i&1);if(!p&&!no.length)continue;
+      const c=(p===null?ATKALL:p==="mod"?ATKALL&~1:fitsOf(p))&~no.reduce((m,x)=>m|fitsOf(x),0);
+      if(c)BR.push({t:(p?[p==="mod"?"mod":"mod:"+p]:[]).concat(no.map(x=>"nomod:"+x)),c})}
+    BR.forEach(b=>b.len=b.t.join(",").length+2);
+    /* the fewest letters that fit exactly the presses in want: brackets side by side mean "or" */
+    const atkBrackets=want=>{
+      const best={0:{len:0,bs:[]}};let grew=true;
+      while(grew){grew=false;
+        for(const k in best)for(const b of BR){
+          if(b.c&~want)continue;const m=+k|b.c,len=best[k].len+b.len;
+          if(!best[m]||len<best[m].len){best[m]={len,bs:best[k].bs.concat([b])};grew=true}}}
+      return best[want].bs};
+    const atkWhen=()=>{
+      if(opts.atk===ATKALL)return"";
+      const on=ATKS.filter((_,i)=>opts.atk>>i&1).map(([s,n])=>s==="none"?"no key":n);
+      return" when you press it with "+(on.length===1?on[0]:on.slice(0,-1).join(", ")+" or "+on[on.length-1])};
+    /* glossary lines for any mod:/nomod: key it writes that has none yet */
+    const nameList=l=>{const n=l.map(x=>KEYN[x].replace(" and "," + "));return n.length===1?n[0]:n.slice(0,-1).join(", ")+" or "+n[n.length-1]};
+    const glossKey=t=>{
+      const m=!GLOSS[t]&&t.match(/^(no)?mod:(.+)$/);if(!m)return;
+      GLOSS[t]=["key",m[1]?"You must not be holding "+nameList(m[2].split("/"))+". The “no” in front turns the condition around.":"You must be holding "+nameList(m[2].split("/"))+"."]};
+    const atkBox=el("div","bfield bseg"),atkG=el("div","segs");atkG.setAttribute("role","group");atkG.setAttribute("aria-label","Start auto-attack when you press it with");
+    const atkBtns=ATKS.map(([s,n],i)=>{const b=el("button","bpre",n);b.type="button";b.onclick=()=>{opts.atk^=1<<i;syncAtk();update()};atkG.append(b);return b});
+    const atkAll=el("button","blink","All"),atkNone=el("button","blink","None");atkAll.type=atkNone.type="button";
+    atkAll.onclick=()=>{opts.atk=ATKALL;syncAtk();update()};atkNone.onclick=()=>{opts.atk=0;syncAtk();update()};
+    atkG.append(atkAll,atkNone);
+    atkBox.append(el("span","bl","Start auto-attack when you press it with"),atkG);
+    const syncAtk=()=>atkBtns.forEach((b,i)=>b.setAttribute("aria-pressed",String(!!(opts.atk>>i&1))));
     const optRow=el("div","btop");
-    const tipBox=el("div","bfield tipbox");tipBox.append(tipL);
-    optRow.append(fld("Start auto-attack",atk,"small2"),fld("Command",cmd,"small"),tipBox);
+    const tipBox=el("div","bfield bseg tipbox");tipBox.append(el("span","bl","Show on the button"),tipG,tipHelp);
+    optRow.append(tipBox,atkBox);
     const pre=el("div","bpresets");pre.append(el("span","bl","Start from"));
     const presetBtns=[];
+    /* paste a macro to edit it: a folded panel under the presets, with a report of what came in and what didn't */
+    const imp=el("details","bimport"),impT=el("textarea"),impB=el("button","bpre","Import"),impR=el("div","bimrep");
+    imp.append(el("summary",null,"Paste a macro to edit it here"));
+    impT.id="mb-import";impT.rows=4;impT.spellcheck=false;impT.placeholder="#showtooltip\n/use [@mouseover,help,nodead][] Healing Wave";impT.setAttribute("aria-label","Macro to import");
+    impB.type="button";impR.setAttribute("aria-live","polite");
+    const impRow=el("div","bimrow");impRow.append(impB,el("span","bnote","This replaces your rules."));
+    imp.append(impT,impRow,impR);
+    const issueList=(head,items,never)=>{if(!items.length)return[];const out=[el("p","bimh",head)];
+      for(const t of items){const p=el("p","bissue"+(never?" never":""));p.append(el("b",null,never?"Left out. ":"Changed. "),document.createTextNode(t));out.push(p)}return out};
+    impB.onclick=()=>{
+      const res=parseMacro(impT.value),n=res.rules.length,k=res.kept;impR.replaceChildren();
+      if(!n&&!k){impR.append(el("p","bwarn",impT.value.trim()?"Nothing was imported: the builder found no macro lines in it. Your rules are unchanged.":"Paste a macro first."));return}
+      rules=res.rules;lines=res.lines;opts=Object.assign({},opts,{tip:res.tip,atk:res.atk});syncTip();syncAtk();drawLines();
+      presetBtns.forEach(b=>b.setAttribute("aria-pressed","false"));
+      try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+      draw();update();
+      impR.append(el("p",null,(n?"Imported "+(n===1?"1 rule":n+" rules"):"No line could become rules")+(k?(n?" and kept ":", so it kept ")+(k===1?"1 other line":k+" other lines")+" as written, under Other lines":"")+
+        (res.skipped.length||res.notes.length?". Check the notes below.":".")),
+        ...issueList("Not imported:",res.skipped,true),...issueList("Written differently:",res.notes,false))};
     const hint=el("p","bnote","Hover over a rule to see which part of the macro it makes, and which line of the reading it matches.");
     const list=el("div","blist"),addBtn=el("button","badd","+ Add a rule");addBtn.type="button";
+    const clearBtn=el("button","bclear","Clear all rules");clearBtn.type="button";
 
     /* ---- explanation side */
     const how=el("div","bhow"),gloss=el("div","bgloss");
 
     const spellOf=r=>{let n=(r.spell||"").replace(/[\r\n;\[\]]/g,"").trim();if(!n)return"";const k=parseInt(r.rank,10);return k>0?n+"(Rank "+k+")":n};
+    /* the conditions a rule checks on its unit; "Anyone" on a unit that may not be there needs exists,
+       or [@mouseover] would fit with nobody under the mouse and the rules after it would never be tried */
+    const condsOf=r=>r.unit==="cursor"||r.unit==="none"?[]:r.who==="any"?(EXISTS[r.unit]?["exists"]:[]):WHOC[r.who];
     const partsOf=r=>{
       const p=[];
       if(r.key==="nomod")p.push({t:"nomod",k:"key"});else if(r.key)p.push({t:"mod:"+r.key,k:"key"});
+      if(r.btn)p.push({t:"btn:"+r.btn,k:"key"});
       if(r.when)p.push({t:r.when,k:"sit"});
+      if(knownOf(r)){const t="known:"+knownOf(r);p.push({t,k:"sit"});
+        if(!GLOSS[t])GLOSS[t]=["sit","You must know "+knownName(knownOf(r))+". Until you learn it the choice is skipped, so one macro works before and after."]}
       if(AT[r.unit])p.push({t:AT[r.unit],k:"unit"});
-      if(r.unit!=="cursor")for(const w of WHOC[r.who])p.push({t:w,k:"flt"});
+      for(const w of condsOf(r))p.push({t:w,k:"flt"});
       return p};
 
-    function explain(valid){
+    /* ---- the checks: what keeps a rule from ever working, and what is worth knowing */
+    const spellInfo=r=>{
+      const raw=(r.spell||"").trim(),name=raw.replace(/\s*\(\s*rank\s*\d+\s*\)\s*$/i,"");
+      return{name,s:SPELLS[name.toLowerCase()]}};
+    /* everything the conditions on the unit say about it; help, harm and dead all mean someone is there */
+    const facts=r=>{const c=condsOf(r);return c.some(x=>x==="help"||x==="harm"||x==="dead")?c.concat("exists"):c};
+    /* does rule a fit every time rule b would? Then b can never be reached below it. */
+    const covers=(a,b)=>{
+      const keyOk=!a.key||a.key===b.key||(a.key!=="nomod"&&b.key&&b.key!=="nomod"&&KEYM[a.key].every(m=>KEYM[b.key].includes(m)));
+      const whenOk=(!a.when||a.when===b.when)&&(!a.btn||a.btn===b.btn)&&(!knownOf(a)||knownOf(a).toLowerCase()===knownOf(b).toLowerCase());
+      const ac=condsOf(a),unitOk=ac.length===0&&(a.unit==="target"||a.unit==="player"||a.unit==="cursor"||a.unit==="none")||(a.unit===b.unit&&ac.every(x=>facts(b).includes(x)));
+      return keyOk&&whenOk&&unitOk};
+    const always=r=>!r.key&&!r.btn&&!r.when&&!knownOf(r)&&condsOf(r).length===0&&(r.unit==="target"||r.unit==="player"||r.unit==="cursor"||r.unit==="none");
+    const numOf=r=>rules.indexOf(r)+1;
+    /* each issue: never = this rule can never work; note = it works, but not always as you'd expect */
+    function check(valid){
+      const res=new Map();
+      valid.forEach((r,i)=>{
+        const list=[],never=t=>list.push({never:true,t}),note=t=>list.push({never:false,t});
+        const {name,s}=spellInfo(r),them=NOUN[r.unit],sp=s?s.n:name;
+        const prev=valid.slice(0,i).find(a=>covers(a,r));
+        /* the same spell again right below, at the same unit, with no conditions: this rule's conditions make no difference */
+        if(partsOf(r).length)for(let j=i+1;j<valid.length&&spellOf(valid[j])===spellOf(r);j++)if(!partsOf(valid[j]).length){
+          if(r.unit===valid[j].unit)note("Makes no difference: rule "+numOf(valid[j])+" right below casts the same spell and always fits, so the builder leaves this rule's conditions out of the macro.");break}
+        if(prev)list.push({never:true,reach:true,t:"Never reached: rule "+numOf(prev)+" fits every time this one would, and the macro always stops at the first rule that fits. Move this rule above it."});
+        if(r.unit==="player"&&(r.who==="ea"||r.who==="e"))never("You are never your own enemy, so this rule can never fit.");
+        if(r.unit==="player"&&r.who==="fd")never("You can't cast while you are dead, so this rule can never work.");
+        if(r.unit==="cursor"&&!(s&&s.t==="ground"))note("@cursor places spells that go on the ground, like Totemic Projection. "+
+          (!s?"Check that this one is placed on the ground.":s.t==="self"||s.t==="none"?sp+" isn't aimed anywhere, so @cursor does nothing for it.":sp+" is cast on a unit, not on the ground, so @cursor can't aim it."));
+        if(!s&&name)note("“"+name+"” isn't a Shaman spell this builder knows. That's fine for an item or another class's spell, but check the spelling: a misspelled name does nothing in the game.");
+        if(s&&r.unit!=="cursor"&&r.unit!=="none"){
+          const friend=r.who==="fa"||r.who==="f"||r.who==="fd",enemy=r.who==="ea"||r.who==="e";
+          const stops=" The macro still stops here, so the rules after it aren't tried.";
+          if(s.t==="enemy"){
+            if(r.unit==="player"&&!enemy)never(sp+" can't be cast on yourself.");
+            else if(friend)never(sp+" only hits enemies, but this rule only fits when "+them+" is friendly. The cast fails."+stops)}
+          if(s.t==="friend"){
+            if(enemy)never(sp+" only works on friendly players, but this rule only fits when "+them+" is an enemy. The cast fails."+stops);
+            else if(r.who==="fd")never(sp+" doesn't work on the dead, but this rule only fits when "+them+" is dead. The cast fails."+stops);
+            else if(r.who==="f"&&r.unit!=="player")note("This rule also fits when "+them+" is dead, and then the cast fails."+stops+" Pick “Friendly and alive” to skip the dead.")}
+          if(s.t==="res"){
+            if(r.who==="fa"||enemy)never(sp+" only works on dead friendly players, but this rule only fits when "+them+" is "+(enemy?"an enemy":"alive")+". The cast fails."+stops);
+            else if(r.unit==="player")never("You can't resurrect yourself.");
+            else if(r.who==="f"||r.who==="any")note("This rule also fits when "+them+" is alive, and then "+sp+" fails."+stops+" Pick “Friendly and dead”.")}
+          if((s.t==="self"||s.t==="none")&&r.unit!=="player"&&(r.unit!=="target"||r.who!=="any"))
+            note(sp+(s.t==="self"?" always goes on you.":" isn't aimed at anyone.")+" The conditions are still checked on "+them+", but the spell isn't cast on them.")}
+        if(list.length)res.set(r,list)});
+      return res}
+
+    /* ---- importing a pasted macro: what the builder can say becomes rules, the rest is listed with the reason.
+       A condition set it can't say is skipped whole, never half-imported, since half of it would mean something else. */
+    const WHENS=["combat","nocombat","swimming","indoors","outdoors"];
+    /* shift / altshift / shiftalt ... to the builder's name for it, or null (altctrl and lshift have no choice in the builder) */
+    const keyName=x=>{const p=x.match(/alt|ctrl|shift/g);if(!p||p.join("")!==x)return null;const k=[...new Set(p)].sort().join("");return KEYM[k]?k:null};
+    /* does one key condition (mod, nomod, mod:a/b, nomod:a/b) fit a press holding these keys */
+    const keyFits=(t,held)=>{
+      const m=t.match(/^(no)?mod(?::(.+))?$/);if(!m)return null;
+      let fit;if(!m[2])fit=held.length>0;else{const ks=m[2].split("/").map(keyName);if(ks.includes(null))return null;fit=ks.some(k=>KEYM[k].every(x=>held.includes(x)))}
+      return m[1]?!fit:fit};
+    const normCond=t=>t.trim().replace(/^(no)?modifier\b/i,"$1mod");
+    /* one pair of brackets to a rule's choices */
+    function readConds(str,spell,where,res){
+      const r={unit:"target",who:"any",key:"",when:""},f={},bad=[];
+      for(const raw of str.split(",").map(normCond).filter(Boolean)){
+        const t=raw.toLowerCase(),at=t.match(/^(?:@|target=)(.+)$/);
+        if(at){if(UNITS.some(u=>u[0]===at[1]))r.unit=at[1];else bad.push(raw)}
+        else if(["help","harm","dead","nodead","exists"].includes(t))f[t]=true;
+        else if(t==="nomod"&&!r.key)r.key="nomod";
+        else if(/^mod:/.test(t)&&!r.key&&keyName(t.slice(4)))r.key=keyName(t.slice(4));
+        else if(WHENS.includes(t)&&!r.when)r.when=t;
+        else if(/^(btn|button):[12]$/.test(t)&&!r.btn)r.btn=t.slice(-1);
+        else if(/^known:/.test(t)&&!r.known&&raw.slice(raw.indexOf(":")+1).trim())r.known=raw.slice(raw.indexOf(":")+1).trim();
+        else bad.push(raw)}
+      if(f.help&&f.harm)bad.push("help and harm together");
+      if(f.dead&&f.nodead)bad.push("dead and nodead together");
+      if(f.help)r.who=f.dead?"fd":f.nodead?"fa":"f";
+      else if(f.harm){if(f.dead)bad.push("harm,dead");else r.who=f.nodead?"ea":"e"}
+      else if(f.dead||f.nodead)bad.push((f.dead?"dead":"nodead")+" without help or harm");
+      if(bad.length){res.skipped.push("["+str+"] "+spell+": the builder has no choice for "+bad.map(b=>"“"+b+"”").join(", ")+".");return null}
+      if((r.unit==="cursor"||r.unit==="none")&&(f.help||f.harm||f.dead||f.nodead||f.exists))res.notes.push("["+str+"] "+spell+": "+AT[r.unit]+" has no unit to check, so the builder drops the conditions on one.");
+      if(r.who==="any"&&EXISTS[r.unit]&&!f.exists)res.notes.push("["+str+"] "+spell+": "+AT[r.unit]+" alone also fits when nobody is there, so the rules after it were never tried. The builder adds exists.");
+      return r}
+    /* a /use or /cast line's choices as rules, with what couldn't be said */
+    function readUse(line){
+      const t={rules:[],skipped:[],notes:[]},m=line.match(/^\/(use|cast)\s+(.*)$/i);
+      for(const clause of m[2].split(";")){
+        const c=clause.match(/^\s*((?:\[[^\]]*\]\s*)*)(.*)$/);let spell=c[2].trim();
+        if(!spell){if(clause.trim())t.skipped.push("“"+clause.trim()+"”: there is no spell after the conditions.");continue}
+        if(spell[0]==="!"){spell=spell.slice(1).trim();t.notes.push("!"+spell+": the builder doesn't write the “!”, which stops a second press from turning the spell off again.")}
+        const rk=spell.match(/^(.*?)\s*\(\s*rank\s*(\d+)\s*\)$/i),name=rk?rk[1]:spell,rank=rk?rk[2]:"";
+        const sets=[...c[1].matchAll(/\[([^\]]*)\]/g)].map(x=>x[1]);
+        for(const s of sets.length?sets:[""]){const r=readConds(s,name,clause,t);if(r)t.rules.push(rule(Object.assign(r,{spell:name,rank})))}}
+      return t}
+    /* /startattack whose conditions are only keys becomes the auto-attack buttons; with anything else it is kept as written */
+    const atkMask=cond=>{
+      const brs=[...cond.matchAll(/\[([^\]]*)\]/g)].map(x=>x[1].split(",").map(normCond).filter(Boolean));
+      if(!brs.length)return ATKALL;
+      if(brs.some(b=>b.some(t=>keyFits(t.toLowerCase(),[])===null)))return null;
+      let m=0;ATKS.forEach(([s],i)=>{const held=s==="none"?[]:KEYM[s];if(brs.some(b=>b.every(t=>keyFits(t.toLowerCase(),held))))m|=1<<i});return m};
+    function parseMacro(text){
+      const res={tip:"",atk:0,rules:[],skipped:[],notes:[],lines:[MAIN],kept:0};
+      const all=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+      /* the rules take the last /use or /cast line they can say in full, never half of one; the rest stay as written */
+      let main=-1,mainRes=null;
+      for(let i=all.length-1;i>=0&&main<0;i--)if(/^\/(use|cast)\s/i.test(all[i])){const t=readUse(all[i]);if(t.rules.length&&!t.skipped.length){main=i;mainRes=t}}
+      const before=[],after=[];
+      all.forEach((line,i)=>{
+        if(i===main)return;
+        let m;
+        if(/^#show(tooltip)?\b/i.test(line)&&i===0){res.tip=/^#showtooltip/i.test(line)?"showtooltip":"show";
+          if(/^#show(tooltip)?\s+\S/i.test(line))res.notes.push("“"+line+"” names what to show. The builder writes it on its own, which shows the spell the macro would cast right now.");return}
+        if(main>=0&&(m=line.match(/^\/startattack\b\s*(.*)$/i))){const a=atkMask(m[1]);if(a!==null){res.atk|=a;return}}
+        (i<main?before:after).push({text:line});res.kept++;
+        if(/^\/(use|cast)\s/i.test(line)){const t=readUse(line);if(t.skipped.length)res.notes.push("“"+line+"” is kept as written, since the rules can't say all of it: "+t.skipped[0])}});
+      if(mainRes){res.rules=mainRes.rules;res.notes.push(...mainRes.notes)}
+      res.lines=before.concat([MAIN],after);
+      return res}
+
+    /* ---- the other lines in words, for the reading */
+    const CMDW={dismount:()=>"gets you off your mount",cancelform:()=>"cancels your shapeshift form, such as Ghost Wolf",
+      stopmacro:()=>"stops the macro here, so the lines after it don't run",stopcasting:()=>"stops the spell you are casting",
+      startattack:()=>"starts your auto-attack on your target",stopattack:()=>"stops your auto-attack",
+      cancelaura:a=>"removes "+(a||"a buff")+" from you",click:a=>"clicks the button named "+(a||"after it"),run:()=>"runs a piece of Lua code",script:()=>"runs a piece of Lua code"};
+    /* conditions in words: commas are "and", bracket sets side by side are "or"; "" when one set is empty, since that always fits */
+    const condWords=sets=>{
+      if(sets.some(x=>!x.trim()))return"";
+      return sets.map(set=>{
+        let unit="target";const f={},parts=[];
+        for(const raw of set.split(",").map(normCond).filter(Boolean)){
+          const t=raw.toLowerCase(),at=t.match(/^(?:@|target=)(.+)$/);let m;
+          if(at)unit=at[1];
+          else if(["help","harm","dead","nodead","exists","noexists"].includes(t))f[t]=true;
+          else if(t==="mod")parts.push("you are holding Shift, Ctrl or Alt");
+          else if(t==="nomod")parts.push(KEYP.nomod);
+          else if((m=t.match(/^(no)?mod:(.+)$/))){const ks=m[2].split("/").map(keyName);
+            parts.push(ks.includes(null)?"“"+raw+"” is true":(m[1]?"you are not holding ":"you are holding ")+ks.map(k=>KEYN[k]).join(" or "))}
+          else if((m=t.match(/^(?:btn|button):([12])$/)))parts.push(BTNP[m[1]]);
+          else if(WHENP[t])parts.push(WHENP[t]);
+          else if(t.startsWith("known:"))parts.push("you know "+knownName(raw.slice(raw.indexOf(":")+1).trim()));
+          else if((m=t.match(/^(no)?(?:form|stance)(?::(\d+))?$/)))parts.push("you are "+(m[1]?"not ":"")+"in "+(m[2]?"form "+m[2]+(m[2]==="1"?" (Ghost Wolf, for a Shaman)":""):"a shapeshift form"));
+          else parts.push("“"+raw+"” is true")}
+        const who=f.help?(f.dead?"is friendly and dead":f.nodead?"is friendly and alive":"is friendly"):f.harm?(f.dead?"is an enemy and dead":f.nodead?"is an enemy and alive":"is an enemy"):
+          f.dead?"is dead":f.nodead?"is alive, or nobody is there":f.exists?"is there":f.noexists?"is not there":"";
+        if(who)parts.push(unit==="player"?"you are "+who.replace(/^is /,""):(NOUN[unit]||"@"+unit)+" "+who);
+        return parts.length===1?parts[0]:parts.slice(0,-1).join(", ")+" and "+parts[parts.length-1]}).join(", or ")};
+    function otherWords(t){
+      const m=t.match(/^\/(\S+)\s*(.*)$/);if(!m)return"“"+t+"” is kept as written.";
+      const cmd=m[1].toLowerCase();
+      const split=x=>{const c=x.match(/^\s*((?:\[[^\]]*\]\s*)*)(.*)$/);return{sets:[...c[1].matchAll(/\[([^\]]*)\]/g)].map(y=>y[1]),arg:c[2].trim()}};
+      if(cmd==="use"||cmd==="cast"){
+        const ch=m[2].split(";").map(split).filter(x=>x.arg);
+        if(!ch.length)return"“"+t+"” has no spell or item to use.";
+        return ch.map((x,i)=>{const w=x.sets.length?condWords(x.sets):"";
+          return i===0?(w?"If "+w+", it uses "+x.arg:"It uses "+x.arg):(w?"if not, it uses "+x.arg+" if "+w:"otherwise it uses "+x.arg)}).join("; ")+"."}
+      const x=split(m[2]),w=x.sets.length?condWords(x.sets):"";
+      const what=CMDW[cmd]?CMDW[cmd](x.arg):"runs “"+t+"”, which the builder doesn't explain";
+      return(w?"If "+w+", it ":"It ")+what+"."}
+    /* another line in the macro box: its command coloured like the builder's, and every part the glossary knows explained there */
+    const otherNodes=(t,add,txt,use)=>{
+      const m=t.match(/^(\/\S+)(.*)$/);if(!m){txt(t);return}
+      const cmd=m[1].toLowerCase();add(m[1],"tk tk-cmd");if(GLOSS[cmd])use(cmd);txt(m[2]);
+      for(const b of m[2].matchAll(/\[([^\]]*)\]/g))for(const raw of b[1].split(",").map(normCond).filter(Boolean)){
+        const k=raw.toLowerCase();glossKey(k);
+        if(/^known:/.test(k)&&!GLOSS[k])GLOSS[k]=["sit","You must know "+knownName(raw.slice(raw.indexOf(":")+1).trim())+"."];
+        if(GLOSS[k])use(k)}};
+
+    function explain(valid,issues){
       how.replaceChildren();
       how.append(el("h3",null,"How this macro reads"));
-      if(!valid.length){how.append(el("p","bnote","Switch on a rule and give it a spell name to see how the macro reads."));return}
-      how.append(el("p",null,"When you press the button, the macro looks at these rules from the top. It uses the first one whose conditions are all true and skips the rest. If none of them is true, nothing happens."));
+      /* the other lines, in words, before and after the rules' line */
+      const at=lines.indexOf(MAIN),before=lines.slice(0,at).filter(x=>x.text.trim()),after=lines.slice(at+1).filter(x=>x.text.trim());
+      const say=(head,items)=>{if(!items.length)return;how.append(el("p",null,head));const ol=el("ol","bsteps");for(const x of items)ol.append(el("li",null,otherWords(x.text.trim())));how.append(ol)};
+      if(!valid.length){
+        if(before.length||after.length)say("When you press the button, it runs these lines from the top:",before.concat(after));
+        else how.append(el("p","bnote","Switch on a rule and give it a spell name to see how the macro reads."));
+        return}
+      say("When you press the button, it first runs these lines from the top:",before);
+      /* /startattack is its own line, run on every press before the spell is picked */
+      if(opts.atk)how.append(el("p",null,(before.length?"Then it":"First it")+" starts your auto-attack on your target"+atkWhen()+". That only does something when your target is an enemy you can attack."));
+      how.append(el("p",null,(opts.atk||before.length?"Then":"When you press the button,")+" the macro looks at these rules from the top. It uses the first one whose conditions are all true and skips the rest, even if that spell then fails. If none of them is true, nothing happens."));
       const ol=el("ol","bsteps");
       valid.forEach(r=>{
         const li=el("li"),conds=[];li.dataset.rule=idOf(r);
         if(KEYP[r.key])conds.push(KEYP[r.key]);
+        if(BTNP[r.btn])conds.push(BTNP[r.btn]);
         if(WHENP[r.when])conds.push(WHENP[r.when]);
-        if(r.unit!=="target"&&r.unit!=="player"&&r.unit!=="cursor"){
+        if(knownOf(r))conds.push("you know "+knownName(knownOf(r)));
+        if(r.unit!=="target"&&r.unit!=="player"&&r.unit!=="cursor"&&r.unit!=="none"){
           if(WHOP[r.who])conds.push(NOUN[r.unit]+" "+WHOP[r.who]);else if(EXISTS[r.unit])conds.push(EXISTS[r.unit]);
         }else if(r.unit==="target"&&WHOP[r.who])conds.push("your target "+WHOP[r.who]);
         else if(r.unit==="player"&&WHOP[r.who])conds.push("you are "+WHOP[r.who].replace(/^is /,""));
-        const spell=el("strong",null,spellOf(r));
+        const spell=el("strong",null,spellOf(r)),its=issues.get(r)||[],{s}=spellInfo(r);
+        /* say what really happens: a rule below one that always fits would cast, a rule that can't work only tries,
+           and a spell that goes on you, or on nobody, ignores where the rule points */
+        /* a name the builder doesn't know may be an item, like a mount: it is used, and only aimed when the rule aims it */
+        const verb=its.some(x=>x.reach)?(s?"would cast ":"would use "):its.some(x=>x.never)?"tries to cast ":s?"casts ":"uses ";
+        const on=!s?(r.unit==="target"?"":ON[r.unit]):s.t==="self"?"on you":s.t==="none"?"(it isn't aimed at anyone)":s.t!=="ground"&&r.unit==="cursor"?"(@cursor can't aim it)":
+          s.t==="ground"&&r.unit==="target"?"(you then click where to place it)":ON[r.unit];
         if(conds.length){
           const c=conds.length===1?conds[0]:conds.slice(0,-1).join(", ")+" and "+conds[conds.length-1];
-          li.append(document.createTextNode("If "+c+", it casts "),spell,document.createTextNode(" "+ON[r.unit]+"."))
-        }else li.append(document.createTextNode("It casts "),spell,document.createTextNode(" "+ON[r.unit]+"."));
+          li.append(document.createTextNode("If "+c+", it "+verb),spell,document.createTextNode((on?" "+on:"")+"."))
+        }else li.append(document.createTextNode("It "+verb),spell,document.createTextNode((on?" "+on:"")+"."));
+        if(its.some(x=>x.never))li.classList.add("bad");
+        for(const x of its){const p=el("span","bissue"+(x.never?" never":""));p.append(el("b",null,x.never?"Won't work. ":"Note. "),document.createTextNode(x.t));li.append(p)}
         ol.append(li)});
-      ol.append(el("li",null,"If none of the above is true, nothing happens."));
-      how.append(ol)}
+      /* a rule that always fits means "otherwise" is never reached */
+      const last=valid.find(always);
+      ol.append(el("li",null,!last?"If none of the above is true, nothing happens.":
+        last===valid[valid.length-1]?"Rule "+numOf(last)+" always fits, so it is the “otherwise”: when nothing above it fits, the macro uses it.":
+        "Rule "+numOf(last)+" always fits, so the macro never gets past it."));
+      how.append(ol);
+      say("After that it runs:",after)}
 
     function glossary(used){
       gloss.replaceChildren();
@@ -269,44 +573,69 @@
       const valid=rules.filter(r=>r.on&&spellOf(r));
       let text="",nodes=[];
       const used=[],use=k=>{if(!used.includes(k))used.push(k)};
-      if(valid.length){
+      const add=(t,cls,rule)=>{const s=el("span",cls,t);if(rule)s.dataset.rule=rule;nodes.push(s);return s};
+      const txt=t=>nodes.push(document.createTextNode(t)),br=()=>{if(nodes.length)txt("\n")};
+      const others=lines.filter(x=>!x.main&&x.text.trim());
+      if(valid.length||others.length){
+        if(opts.tip){use("#"+opts.tip);add("#"+opts.tip,"tk tk-cmd")}
+        for(const item of lines){
+          if(!item.main){if(item.text.trim()){br();otherNodes(item.text.trim(),add,txt,use)}continue}
+          if(!valid.length)continue;
         const groups=[];
         for(const r of valid){const sp=spellOf(r),last=groups[groups.length-1];
           if(last&&last.sp===sp)last.rs.push(r);else groups.push({sp,rs:[r]})}
-        const add=(t,cls,rule)=>{const s=el("span",cls,t);if(rule)s.dataset.rule=rule;nodes.push(s);return s};
-        const txt=t=>nodes.push(document.createTextNode(t));
-        if(opts.tip){use("#showtooltip");add("#showtooltip","tk tk-cmd");txt("\n")}
-        if(opts.attack!=="off"){use("/startattack");add("/startattack","tk tk-cmd");if(opts.attack==="nomod"){txt(" ");const c=add("","cl");c.append(document.createTextNode("["),el("span","tk tk-key","nomod"),document.createTextNode("]"));use("nomod");use("[ ]")}txt("\n")}
-        use("/"+opts.cmd);add("/"+opts.cmd,"tk tk-cmd");txt(" ");
+        if(opts.atk){br();use("/startattack");add("/startattack","tk tk-cmd");
+          const bs=opts.atk===ATKALL?[]:atkBrackets(opts.atk);if(bs.length){txt(" ");use("[ ]");if(bs.length>1)use("][")}
+          for(const b of bs){const c=add("","cl");c.append(document.createTextNode("["));
+            b.t.forEach((t,ti)=>{if(ti){c.append(document.createTextNode(","));use(",")}c.append(el("span","tk tk-key",t));glossKey(t);use(t)});
+            c.append(document.createTextNode("]"))}}
+        /* /use does exactly what /cast does, one letter shorter */
+        br();use("/use");add("/use","tk tk-cmd");txt(" ");
         groups.forEach((g,gi)=>{
           if(gi>0){use(";");add(";","tk tk-sym")}
-          const bare=g.rs.length===1&&partsOf(g.rs[0]).length===0;
+          /* a rule with no conditions always fits, and the rules after it never get a turn. The rules before it that aim at the same unit
+             change nothing, so they are left out: [mod:shift][]X is just X. One aimed elsewhere still decides who gets the spell,
+             so [@mouseover,help][]X keeps both. */
+          const ai=g.rs.findIndex(r=>!partsOf(r).length);
+          const keep=ai<0?g.rs:g.rs.slice(0,ai+1).filter((r,k)=>k===ai||r.unit!==g.rs[ai].unit);
+          const bare=ai>=0&&keep.length===1;
           if(!bare){
-            if(g.rs.length>1)use("][");
+            if(keep.length>1)use("][");
             use("[ ]");
-            g.rs.forEach(r=>{
+            keep.forEach(r=>{
               const c=add("","cl",idOf(r));c.append(document.createTextNode("["));
-              partsOf(r).forEach((p,pi)=>{if(pi>0)c.append(document.createTextNode(","));c.append(el("span","tk tk-"+p.k,p.t));use(p.t)});
-              c.append(document.createTextNode("]"))});
-            txt(" ")}
-          add(g.sp,"tk tk-spell");use("spell")});
+              partsOf(r).forEach((p,pi)=>{if(pi>0){c.append(document.createTextNode(","));use(",")}c.append(el("span","tk tk-"+p.k,p.t));use(p.t)});
+              c.append(document.createTextNode("]"))})}
+          /* no space between "]" and the spell: the game doesn't need one, and each saves a character */
+          add(g.sp,"tk tk-spell");use("spell")})}
         text=nodes.map(n=>n.textContent).join("")}
       out.set(text,nodes);
       warn.hidden=text.length<=MAXLEN;
       warn.textContent=text.length>MAXLEN?"This is "+(text.length-MAXLEN)+" characters over the 255 limit. Remove a rule or a key to shorten it, or use spell IDs in place of long spell names.":"";
-      explain(valid);glossary(used)};
+      const issues=check(valid),nBad=valid.filter(r=>(issues.get(r)||[]).some(x=>x.never)).length;
+      bad.hidden=!nBad;
+      bad.textContent=nBad?(nBad===1?"One rule":nBad+" rules")+" in this macro can never work. "+(nBad===1?"It is":"They are")+" marked below, with the reason.":"";
+      for(const r of rules){
+        const box=rowMsg.get(r);if(!box)continue;
+        const its=r.on?issues.get(r)||[]:[];
+        box.replaceChildren(...its.map(x=>{const p=el("p","bissue"+(x.never?" never":""));p.append(el("b",null,x.never?"Won't work. ":"Note. "),document.createTextNode(x.t));return p}));
+        box.hidden=!its.length;box.parentNode.classList.toggle("bad",its.some(x=>x.never))}
+      explain(valid,issues);glossary(used)};
 
+    const rowMsg=new WeakMap();
     function draw(){
-      list.replaceChildren();
+      list.replaceChildren();clearBtn.disabled=!rules.length;
       rules.forEach((r,i)=>{
         const n=idOf(r),row=el("div","rrow"+(r.on?"":" off"));row.dataset.rule=n;
         const headRow=el("div","rhead");
         const cb=el("input");cb.type="checkbox";cb.checked=r.on;cb.id="mb-on-"+n;cb.setAttribute("aria-label","Use rule "+(i+1));
         cb.onchange=()=>{r.on=cb.checked;row.classList.toggle("off",!r.on);update()};
-        const sp=el("input");sp.type="text";sp.id="mb-sp-"+n;sp.value=r.spell;sp.placeholder="Spell name";sp.autocomplete="off";sp.spellcheck=false;sp.setAttribute("aria-label","Spell for rule "+(i+1));
+        const sp=el("input");sp.type="text";sp.id="mb-sp-"+n;sp.value=r.spell;sp.placeholder="Spell name";sp.autocomplete="off";sp.spellcheck=false;sp.setAttribute("list","mb-spells");sp.setAttribute("aria-label","Spell for rule "+(i+1));
         sp.oninput=()=>{r.spell=sp.value;update()};
-        const rk=el("input");rk.type="number";rk.id="mb-rk-"+n;rk.min="1";rk.max="20";rk.placeholder="Highest";rk.value=r.rank;rk.setAttribute("aria-label","Rank for rule "+(i+1));
-        rk.oninput=()=>{r.rank=rk.value;update()};
+        /* the down arrow goes one step past Rank 1 to 0, which empties the box: back to "Highest", no rank in the macro */
+        const rk=el("input");rk.type="number";rk.id="mb-rk-"+n;rk.min="0";rk.max="20";rk.placeholder="Highest rank";rk.value=r.rank;
+        rk.title="Rank of the spell to cast. Leave empty for your highest rank.";rk.setAttribute("aria-label","Rank of the spell for rule "+(i+1)+". Leave empty for your highest rank.");
+        rk.oninput=()=>{if(rk.value!==""&&+rk.value<1)rk.value="";r.rank=rk.value;update()};
         const up=el("button","mv","\u2191"),dn=el("button","mv","\u2193"),del=el("button","mv del","\u2715");
         up.type=dn.type=del.type="button";
         up.setAttribute("aria-label","Move rule "+(i+1)+" up");dn.setAttribute("aria-label","Move rule "+(i+1)+" down");del.setAttribute("aria-label","Remove rule "+(i+1));
@@ -321,25 +650,51 @@
         const field=(label,list2,key)=>{
           const s=mkSel("mb-"+key+"-"+n,list2,r[key]);s.onchange=()=>{r[key]=s.value;update()};
           const f=el("div","rf"),l=el("label",null,label);l.htmlFor=s.id;f.append(l,s);return f};
-        sels.append(field("Aimed at",UNITS,"unit"),field("Only if they are",WHO,"who"),field("While holding",KEYS,"key"),field("When",WHEN,"when"));
-        row.append(headRow,sels);list.append(row)})}
+        sels.append(field("Aimed at",UNITS,"unit"),field("Only if they are",WHO,"who"),field("While holding",KEYS,"key"),field("Click with",BTNS,"btn"),field("When",WHEN,"when"));
+        const kn=el("input");kn.type="text";kn.id="mb-kn-"+n;kn.value=r.known||"";kn.placeholder="Any spell, or leave empty";kn.autocomplete="off";kn.spellcheck=false;
+        kn.setAttribute("list","mb-spells");kn.oninput=()=>{r.known=kn.value;update()};
+        const knF=el("div","rf"),knLb=el("label",null,"Only if you know");knLb.htmlFor=kn.id;knF.append(knLb,kn);sels.append(knF);
+        const msg=el("div","rmsg");msg.hidden=true;msg.setAttribute("aria-live","polite");rowMsg.set(r,msg);
+        row.append(headRow,sels,msg);list.append(row)})}
 
+    /* the other lines, kept as written: edit, move around the rules' own line, or remove */
+    const linesBox=el("div","blines"),linesList=el("div","llist"),lineAdd=el("button","badd","+ Add another line");lineAdd.type="button";
+    linesBox.append(el("h3",null,"Other lines"),el("p","bnote","Lines the rules don't build, like /stopmacro or /dismount, kept as you write them. Move them above or below the rules' line to set when they run."),linesList,lineAdd);
+    function drawLines(){
+      linesList.replaceChildren();linesList.hidden=lines.length===1;
+      lines.forEach((x,i)=>{
+        const row=el("div","lrow"+(x.main?" main":""));let body;
+        if(x.main)body=el("span","lmain","The rules above: their /use line");
+        else{body=el("input");body.type="text";body.value=x.text;body.spellcheck=false;body.autocomplete="off";body.placeholder="/stopmacro [mod:ctrl]";
+          body.setAttribute("aria-label","Macro line "+(i+1));body.oninput=()=>{x.text=body.value;update()}}
+        const up=el("button","mv","\u2191"),dn=el("button","mv","\u2193");up.type=dn.type="button";up.disabled=i===0;dn.disabled=i===lines.length-1;
+        up.setAttribute("aria-label","Move line "+(i+1)+" up");dn.setAttribute("aria-label","Move line "+(i+1)+" down");
+        up.onclick=()=>{[lines[i-1],lines[i]]=[lines[i],lines[i-1]];drawLines();update()};
+        dn.onclick=()=>{[lines[i+1],lines[i]]=[lines[i],lines[i+1]];drawLines();update()};
+        const mv=el("div","mvs");mv.append(up,dn);
+        if(!x.main){const del=el("button","mv del","\u2715");del.type="button";del.setAttribute("aria-label","Remove line "+(i+1));del.onclick=()=>{lines.splice(i,1);drawLines();update()};mv.append(del)}
+        row.append(body,mv);linesList.append(row)})}
+    lineAdd.onclick=()=>{lines.push({text:""});drawLines();update();const ins=linesList.querySelectorAll("input");if(ins.length)ins[ins.length-1].focus()};
     function load(p){
-      rules=p.rules();opts=Object.assign({},p.opts);
-      tip.checked=opts.tip;atk.value=opts.attack;cmd.value=opts.cmd;
+      lines=[MAIN];drawLines();
+      rules=p.rules();opts=Object.assign({},p.opts);opts.atk=p.opts.attack==="always"?ATKALL:0;
+      syncTip();syncAtk();
       presetBtns.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===p.id)));
       draw();update()}
     for(const p of PRESETS){
       const b=el("button","bpre",p.name);b.type="button";b.dataset.id=p.id;b.setAttribute("aria-pressed","false");
       b.onclick=()=>{load(p);try{history.replaceState(null,"","#"+p.id)}catch(e){}};
       presetBtns.push(b);pre.append(b)}
-    tip.onchange=()=>{opts.tip=tip.checked;update()};
-    atk.onchange=()=>{opts.attack=atk.value;update()};
-    cmd.onchange=()=>{opts.cmd=cmd.value;update()};
     addBtn.onclick=()=>{
       const last=rules[rules.length-1];
       rules.push(rule({spell:last?last.spell:"Healing Wave",unit:"target"}));draw();update();
       const nr=list.lastElementChild&&list.lastElementChild.querySelector("input[type=text]");if(nr)nr.focus()};
+    /* start from an empty list: no preset is picked any more, so the link loses its preset too */
+    clearBtn.onclick=()=>{
+      rules=[];draw();update();
+      presetBtns.forEach(b=>b.setAttribute("aria-pressed","false"));
+      try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+      addBtn.focus()};
 
     /* hovering or focusing a rule, a part of the macro or a line of the reading lights up the other two */
     let lit=null;
@@ -352,10 +707,11 @@
     root.addEventListener("focusin",ev=>{const t=ev.target.closest&&ev.target.closest("[data-rule]");light(t?t.dataset.rule:null)});
     root.addEventListener("focusout",()=>light(null));
 
-    const left=el("div","bleft");left.append(list,addBtn);
+    const acts=el("div","bacts");acts.append(addBtn,clearBtn);
+    const left=el("div","bleft");left.append(acts,list,linesBox);
     const side=el("div","bside");side.append(how,gloss);
     const grid=el("div","bgrid");grid.append(left,side);
-    root.append(head,optRow,pre,hint,grid);
+    root.append(pre,imp,head,optRow,hint,grid,dl);
     const fromHash=(scroll)=>{
       const id=(location.hash||"").slice(1),p=PRESETS.find(x=>x.id===id);
       load(p||PRESETS[0]);

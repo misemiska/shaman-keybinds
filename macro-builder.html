@@ -23,13 +23,14 @@
 
       <h3>What a macro is</h3>
       <p>A macro is a short list of commands that the game runs, from top to bottom, when you press its button. Most useful macros are only one or two lines long. You write them in the macro window, which you open with <code>/m</code>, then drag the finished macro onto your action bar like a spell.</p>
-      <pre class="eg">#showtooltip
-/cast Healing Wave</pre>
-      <p><code>#showtooltip</code> makes the button show the spell's icon. <code>/cast Healing Wave</code> casts the spell on your current target. On its own that is no better than dragging the spell to your bar, so the interesting part is the conditions.</p>
+      <pre class="eg">#show
+/use Healing Wave</pre>
+      <p><code>#show</code> makes the button show the spell's icon. <code>#showtooltip</code> does the same and also shows the spell's tooltip when you hover over the button, for 7 more characters. <code>/use Healing Wave</code> casts the spell on your current target. On its own that is no better than dragging the spell to your bar, so the interesting part is the conditions.</p>
+      <p><code>/use</code> does exactly the same as <code>/cast</code>: <code>/cast</code> can use items and <code>/use</code> can cast spells. <code>/use</code> is one letter shorter, so every macro on this site uses it.</p>
 
       <h3>Conditions make it smart</h3>
       <p>Put conditions in square brackets before a spell name. The spell is only used if everything inside the brackets is true right now.</p>
-      <pre class="eg">/cast [help] Healing Wave; Lightning Bolt</pre>
+      <pre class="eg">/use [help]Healing Wave;Lightning Bolt</pre>
       <p>Read it as: if your target is friendly, cast Healing Wave. Otherwise cast Lightning Bolt. The semicolon separates the choices. The macro goes through them from left to right, uses the first one that fits, and ignores the rest.</p>
       <ul>
         <li><strong>The last choice is the "otherwise".</strong> A spell with no brackets always fits, so put one at the end if you want a fallback. Without one, the button does nothing when no choice fits.</li>
@@ -38,14 +39,37 @@
 
       <h3>Aim it with @</h3>
       <p>By default the conditions look at your target. Write <code>@</code> and a unit to look at, and cast at, someone else. <code>@mouseover</code> is the unit under your mouse, <code>@focus</code> is your focus, <code>@targettarget</code> is whoever your target is targeting, and <code>@player</code> is you.</p>
-      <pre class="eg">/cast [@mouseover,help,nodead] Healing Wave</pre>
+      <pre class="eg">/use [@mouseover,help,nodead]Healing Wave</pre>
       <p>The words after the <code>@</code> are more conditions on that unit, separated by commas, and all of them must be true. <code>help</code> means friendly, <code>harm</code> means an enemy, <code>nodead</code> means alive and <code>dead</code> means dead.</p>
       <p>Put two brackets side by side, like <code>[@mouseover,help][help]</code>, and either one is enough. That is how a smart healing macro tries one unit after another.</p>
 
       <h3>Keys and situations</h3>
       <p><code>mod:shift</code>, <code>mod:ctrl</code> and <code>mod:alt</code> check which key you are holding, so one button can do several jobs. <code>combat</code>, <code>swimming</code> and <code>indoors</code> check the situation you are in.</p>
-      <pre class="eg">/cast [mod:shift] Earth Shock(Rank 1); Earth Shock</pre>
+      <pre class="eg">/use [mod:shift]Earth Shock(Rank 1);Earth Shock</pre>
       <p>Hold Shift for the cheap lower rank, or press normally for your highest rank. Same button, two uses.</p>
+      <p>To need two keys at once, join their names: <code>[mod:altshift]</code> means Alt and Shift together. <code>mod:shift</code> also fits while you hold Alt and Shift, so put the two-key rule first.</p>
+
+      <h3>Saving characters</h3>
+      <p>A macro can hold 255 characters, and a button that does four jobs fills that fast. These habits keep a macro short without changing what it does. The builder uses all of them.</p>
+      <ul>
+        <li><strong>Leave out the spaces.</strong> The game needs no space after <code>]</code>, <code>;</code> or <code>,</code>. <code>[help]Healing Wave;Lightning Bolt</code> works exactly like <code>[help] Healing Wave; Lightning Bolt</code>, two characters shorter.</li>
+        <li><strong>Write <code>/use</code>, not <code>/cast</code>,</strong> and <code>#show</code> rather than <code>#showtooltip</code> if you can do without the tooltip: 7 characters.</li>
+        <li><strong>Use the short forms.</strong> <code>@</code> instead of <code>target=</code>, <code>mod</code> instead of <code>modifier</code>, <code>btn</code> instead of <code>button</code>. Join two keys into one: <code>mod:altshift</code> is 5 characters shorter than <code>mod:alt,mod:shift</code>.</li>
+        <li><strong>Leave out <code>@target</code>.</strong> Conditions look at your target unless you say otherwise, so <code>[help]</code> does what <code>[@target,help]</code> does.</li>
+        <li><strong>Name a spell once.</strong> Brackets side by side share the spell after them: <code>[@mouseover,help,nodead][help,nodead]Healing Wave</code> instead of writing Healing Wave twice.</li>
+        <li><strong>Drop conditions that change nothing.</strong> The last choice needs no brackets. And if a spell's next choice has no conditions, the brackets before it do nothing: <code>[mod:shift][]Earth Shock</code> is just <code>Earth Shock</code>.</li>
+        <li><strong>Use a spell ID for a long name.</strong> <code>8042</code> is Earth Shock (Rank 1), 15 characters shorter. Each rank has its own ID: find it in the address of the spell's page on Wowhead, and try it in your game before you rely on it. Small numbers like <code>16</code> mean an equipment slot instead, so this only works for spells.</li>
+      </ul>
+
+      <h3>Mistakes that stop a macro working</h3>
+      <p>The game accepts a macro even when part of it can never work, so these mistakes are easy to miss. The builder marks them for you.</p>
+      <ul>
+        <li><strong>Check that someone is there.</strong> <code>[@mouseover]</code> on its own fits even when nobody is under your mouse, so the macro stops there and never tries the next choice. Add <code>exists</code>, or <code>help</code> or <code>harm</code>, which both mean someone is there. <code>nodead</code> alone doesn't count: nobody there is also "not dead".</li>
+        <li><strong>The macro stops at the first fit, even if the spell then fails.</strong> <code>[@mouseover,exists]Lightning Bolt</code> on a friendly player picks Lightning Bolt, the cast fails, and nothing else is tried. Match the spell to who it is for: <code>help</code> for heals, <code>harm</code> for attacks, <code>dead</code> for Ancestral Spirit.</li>
+        <li><strong>A rule below one that always fits is never used.</strong> A choice with fewer conditions catches everything a stricter choice below it would. Put the strictest choices first and the "otherwise" last.</li>
+        <li><strong><code>@cursor</code> is for spells you place on the ground.</strong> In WoW: Forever that is Totemic Projection: <code>/use [@cursor]Totemic Projection</code> moves your totems to the spot under your mouse without the targeting circle. TBC Shamans have no such spell.</li>
+        <li><strong>Spells that aren't aimed ignore the <code>@</code>.</strong> Shields, imbues and Ghost Wolf always go on you, and totems drop at your feet. The conditions are still checked on that unit, though.</li>
+      </ul>
 
       <h2>Why they are worth it</h2>
       <p>Each of these starts a macro in the builder above. Open one, hover over its rules, and change something to see what happens.</p>
@@ -58,9 +82,10 @@
 
       <h2>Good to know</h2>
       <ul>
-        <li><strong>The limit is 255 characters.</strong> Long spell names and many conditions add up. The counter above warns you when you are close.</li>
-        <li><strong><code>#showtooltip</code> goes first.</strong> On its own it shows the spell the macro would cast right now, so the icon changes as your conditions do.</li>
+        <li><strong>The limit is 255 characters.</strong> Long spell names and many conditions add up. The counter above warns you when you are close, and Saving characters above shows how to win some back.</li>
+        <li><strong><code>#show</code> or <code>#showtooltip</code> goes first.</strong> On its own it shows the spell the macro would cast right now, so the icon changes as your conditions do.</li>
         <li><strong>If nothing happens, no choice fit.</strong> Check the order, and add a spell with no conditions at the end if you want a fallback.</li>
+        <li><strong>Watch out for keys the game already uses.</strong> By default, Shift with 1 to 6 switches your action bar page, so a Shift rule on those keys never reaches the macro. Unbind those keys, or use another one.</li>
         <li><strong>Try a new macro on a friendly player or a training dummy</strong> before you rely on it in a fight.</li>
       </ul>
     </section>
