@@ -754,7 +754,7 @@
       N("en",0,1),N("en",1,1,"Mental Dexterity",3),N("en",2,1,"Improved Ghost Wolf",2),N("en",3,1),
       N("en",0,2,"Elemental Weapons",3),N("en",2,2,"Shamanistic Focus",1),N("en",3,2,"Anticipation",3),
       N("en",0,3),N("en",1,3,"Flurry",5),N("en",2,3,"Stormstrike",1),
-      N("en",0,4,"Spirit Weapons",1),N("en",1,4),N("en",2,4,"Improved Stormstrike",2),
+      N("en",0,4,"Spirit Weapons",1),N("en",1,4,"Mental Quickness",2),N("en",2,4,"Improved Stormstrike",2),
       N("en",2,5),N("en",1,6),
       N("re",1,0),N("re",2,0,"Tidal Focus",5),
       N("re",0,1,"Mindfulness",3),N("re",1,1),N("re",2,1),N("re",3,1),
@@ -940,6 +940,36 @@
           setTimeout(refresh,300);
           for(const n of [edNode,cofNode]){n.el.classList.remove("swp");void n.el.offsetWidth;n.el.classList.add("swp")}
           setTimeout(()=>{for(const s of pair)for(const td of [s.tr.children[1],s.tr.children[2]])td.classList.remove("flip");for(const n of [edNode,cofNode])n.el.classList.remove("swp")},1100)}}}
+
+    /* A pick between talents for the same levels, like Reverberation or Mental Quickness at 58 to 59:
+       <div data-widget="alt-pick" data-levels="58-59" data-options="Reverberation|Mental Quickness"></div>
+       The table row and the trees show the one picked, and text marked data-for="<talent>" shows only with it. */
+    left.querySelectorAll('[data-widget="alt-pick"]').forEach(mk=>{
+      const lv=(mk.dataset.levels||"").match(/^(\d+)-(\d+)$/),nodes=(mk.dataset.options||"").split("|").map(n=>BYNAME[n.trim()]);
+      const st=lv&&steps.find(s=>s.a===+lv[1]&&s.b===+lv[2]);
+      if(!st||nodes.length<2||nodes.some(n=>!n)||!nodes.includes(st.node)){mk.remove();return}
+      /* each talent continues from the ranks it already has by these levels */
+      const rankFrom=node=>steps.filter(s=>s!==st&&s.node===node&&s.b<st.a).reduce((n,s)=>n+s.n,0)+1;
+      if(nodes.some(n=>rankFrom(n)+st.n-1>n.max)){mk.remove();return}
+      const box=el("div","swapbox"),seg=el("div","swseg"),live=el("span","swlive");
+      seg.setAttribute("role","group");seg.setAttribute("aria-label","Talent for levels "+st.a+" to "+st.b);live.setAttribute("aria-live","polite");
+      box.append(el("span","swl","Levels "+st.a+" to "+st.b),seg,live);
+      const notes=n=>left.querySelectorAll('[data-for="'+n.name+'"]');
+      const show=()=>nodes.forEach(n=>notes(n).forEach(x=>{x.hidden=n!==st.node}));
+      const paint=()=>{st.tr.children[1].textContent=st.node.name;st.tr.children[2].textContent=st.r1===st.r2?String(st.r1):st.r1+" to "+st.r2};
+      const choose=n=>{
+        if(n===st.node)return;
+        const was=st.node;st.node=n;st.r1=rankFrom(n);st.r2=st.r1+st.n-1;
+        for(const b of seg.children)b.setAttribute("aria-pressed",String(b.textContent===n.name));
+        live.textContent=n.name+" at levels "+st.a+" to "+st.b;show();
+        const refresh=()=>{shown=-1;draw(disp)};
+        if(calm){paint();refresh();return}
+        for(const td of [st.tr.children[1],st.tr.children[2]]){td.classList.remove("flip");void td.offsetWidth;td.classList.add("flip")}
+        setTimeout(()=>{paint();refresh()},300);
+        for(const x of [was,n]){x.el.classList.remove("swp");void x.el.offsetWidth;x.el.classList.add("swp")}
+        setTimeout(()=>{for(const td of [st.tr.children[1],st.tr.children[2]])td.classList.remove("flip");for(const x of [was,n])x.el.classList.remove("swp")},1100)};
+      for(const n of nodes){const b=el("button",null,n.name);b.type="button";b.setAttribute("aria-pressed",String(n===st.node));b.onclick=()=>choose(n);seg.append(b)}
+      mk.replaceWith(box);show()});
     disp=target=levelFromScroll();draw(disp)}
 
   /* Sidebar on guide pages: the sections of this guide, then every guide */

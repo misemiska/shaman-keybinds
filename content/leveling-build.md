@@ -1,5 +1,5 @@
 ### The build
-My talent order for leveling and dungeons, from level 10 to 60. It ends with 24 points in Enhancement, 19 in Elemental and 8 in Restoration.
+My talent order for leveling and dungeons, from level 10 to 60. It ends with 24 points in Enhancement, 19 in Elemental and 8 in Restoration, or 26 in Enhancement and 17 in Elemental with the Mental Quickness pick at the end.
 
 Scroll down and the talent trees on the right fill in, one point per level, as each part is explained. You can also drag the level slider above the trees.
 
@@ -40,7 +40,7 @@ We leave the Enhancement tree for Tidal Focus and Mindfulness.
 ### Levels 41 to 57
 After that, the Elemental tree, for Concussion, improved fire totems (Call of Flame), Clearcasting (Elemental Focus), Reverberation and Elemental Devastation, for the fun.
 
-**Elemental Devastation and Call of Flame can be taken in either order.** Pick whichever you want first with the switch below, and the table and the talent trees swap with it. Elemental Focus stays at level 51 either way.
+**Elemental Devastation and Call of Flame can be taken in either order.** Pick whichever you want first with the switch below, and the table and the talent trees swap with it. Elemental Focus stays at level 51 either way, and both are finished before Reverberation starts at 53.
 
 <div data-widget="swap-order"></div>
 
@@ -50,12 +50,17 @@ After that, the Elemental tree, for Concussion, improved fire totems (Call of Fl
 | 46 to 48 | Call of Flame | 1 to 3 |
 | 49 to 50 | Elemental Devastation | 1 to 2 |
 | 51 | Elemental Focus | 1 |
-| 52 to 54 | Reverberation | 1 to 3 |
-| 55 | Elemental Devastation | 3 |
+| 52 | Elemental Devastation | 3 |
+| 53 to 55 | Reverberation | 1 to 3 |
 | 56 to 57 | Trial by Fire | 1 to 2 |
 
 ### Levels 58 to 60
-We finish with the last two points of Reverberation and the last point of Flurry, to round out the build at level 60.
+We finish with two more points and the last point of Flurry, to round out the build at level 60. **The two points at 58 and 59 are your pick.** Choose with the switch below, and the table and the talent trees change with it.
+
+<div data-widget="alt-pick" data-levels="58-59" data-options="Reverberation|Mental Quickness"></div>
+
+<p data-for="Reverberation"><strong>Reverberation</strong> gets its last two points, to rank 5. This is my pick.</p>
+<p data-for="Mental Quickness"><strong>Mental Quickness</strong> instead, in the Enhancement tree. At rank 2 it adds up to 30% of your Intellect to your spell damage and healing. Take it if you wear a lot of Intellect, or want to put your AoE damage first. Reverberation then stays at rank 3.</p>
 
 | Levels | Talent | Ranks |
 | --- | --- | --- |
