@@ -1,8 +1,8 @@
 ### The builds
 My talent orders for leveling and dungeons, from level 10 to 60. There are three, and they all end in the same Enhancement core. Pick one:
 
-- **Enhancement first** goes straight into Enhancement and never respecs. It ends with 26 points in Enhancement, 17 in Elemental and 8 in Restoration.
-- **Restoration first, respec at 30** starts in Restoration for mana as early as possible, then respecs into Enhancement at level 30, once Improved Stormstrike can take its first point. From there it is the same as Enhancement first, and ends the same. The respec costs gold.
+- **Enhancement first, no respec** goes straight into Enhancement and never respecs. It ends with 26 points in Enhancement, 17 in Elemental and 8 in Restoration.
+- **Restoration first, respec at 30** starts in Restoration for mana as early as possible, then respecs into Enhancement at level 30, once Improved Stormstrike can take its first point. From there it is the same as *Enhancement first, no respec*, and ends the same. The respec costs gold.
 - **Restoration first, no respec** also starts in Restoration, for Water Shield and its early mana, but never respecs, so it costs no gold. It ends with 28 points in Enhancement, 12 in Elemental and 11 in Restoration, a few points short in Elemental compared with the other two.
 
 <div data-widget="build-pick"></div>
@@ -12,7 +12,7 @@ Scroll down and the talent trees on the right fill in, one point per level, as e
 <div data-widget="talent-calc"></div>
 
 ### Levels 10 to 25
-<div data-build="enhance" data-name="Enhancement first"></div>
+<div data-build="enhance" data-name="Enhancement first, no respec"></div>
 
 Thundering Strikes first, then Mental Dexterity, which leads to Flurry. Ancestral Knowledge, Shamanistic Focus and Anticipation follow, and Stormstrike comes at 25, as soon as the tree opens its fourth row.
 
@@ -81,7 +81,7 @@ Tidal Focus and Mindfulness first, then two points of Totemic Focus and Water Sh
 ### The respec at level 30
 <div data-respec="30"></div>
 
-At 30, reset your talents at a trainer and spend the 21 points again, in this order. It is the same as Enhancement first up to level 30, ending with the first point in Improved Stormstrike.
+At 30, reset your talents at a trainer and spend the 21 points again, in this order. It is the same as *Enhancement first, no respec* up to level 30, ending with the first point in Improved Stormstrike.
 
 | Levels | Talent | Ranks |
 | --- | --- | --- |
@@ -108,7 +108,7 @@ The last point of Improved Stormstrike, Spirit Weapons and Mental Quickness, the
 | 40 to 42 | Mindfulness | 1 to 3 |
 
 ### Levels 43 to 60
-The Elemental tree, as in Enhancement first: Concussion, Call of Flame, Elemental Devastation, Elemental Focus, Reverberation and Trial by Fire, and the last point back into Flurry.
+The Elemental tree, as in *Enhancement first, no respec*: Concussion, Call of Flame, Elemental Devastation, Elemental Focus, Reverberation and Trial by Fire, and the last point back into Flurry.
 
 **Elemental Devastation and Call of Flame can be taken in either order.** Pick whichever you want first with the switch below. Both are finished before Reverberation.
 

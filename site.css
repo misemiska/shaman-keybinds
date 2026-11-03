@@ -458,7 +458,6 @@ html.lbon{overflow:hidden}
 .tn{position:relative;width:var(--n);height:var(--n)}
 .tn-ic{position:absolute;inset:0;background:var(--img) no-repeat;background-size:calc(var(--s)*var(--W)*1px) calc(var(--s)*var(--H)*1px);background-position:calc(var(--s)*var(--bx)*-1px) calc(var(--s)*var(--by)*-1px);filter:var(--tc-off);transition:filter .25s}
 .tn::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px var(--tc-node);pointer-events:none;transition:box-shadow .25s}
-.tn.un .tn-ic{filter:var(--tc-off);opacity:.8}
 .tn.on .tn-ic{filter:none}
 .tn.on::after{box-shadow:inset 0 0 0 2px var(--tc-green)}
 .tn.on.full::after{box-shadow:inset 0 0 0 2px var(--tc-gold)}

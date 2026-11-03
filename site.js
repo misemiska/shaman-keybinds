@@ -881,7 +881,7 @@
       for(const n of NODES){
         const r=rankAt(n,p);sum[n.t]+=r;
         const was=prev.get(n);prev.set(n,r);
-        n.el.classList.toggle("on",r>0);n.el.classList.toggle("full",r>0&&r===n.max);n.el.classList.toggle("un",!cp.used.has(n));
+        n.el.classList.toggle("on",r>0);n.el.classList.toggle("full",r>0&&r===n.max);
         n.bd.textContent=r+"/"+n.max;
         n.el.title=cp.used.has(n)?n.name+", rank "+r+" of "+n.max:n.name+": not used in this build";
         if(!calm&&was!==undefined&&r>was){n.el.classList.remove("pop");void n.el.offsetWidth;n.el.classList.add("pop")}}
