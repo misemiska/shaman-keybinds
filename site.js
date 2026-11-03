@@ -736,32 +736,47 @@
         ov.addEventListener("click",ev=>{if(ev.target!==open)done()});
         close.addEventListener("click",ev=>{ev.stopPropagation();done()})})})}
 
-  /* The talent calculator: the page's own tables are the steps. Scrolling (or the slider) sets a level and the trees show the points spent by then. */
+  /* The talent calculator: the page's own tables are the steps. Scrolling (or the slider) walks through the levels and the trees show the points spent by then.
+     A page can hold several builds, picked with a switcher. A build can respec once: the trees then change to the new spec all at once. */
   function talentCalc(host){
     const marker=host.querySelector('[data-widget="talent-calc"]');if(!marker)return;
     marker.remove();
-    const SRC="images/leveling-talents.png",W=867,H=510,ICON=40,PX={el:0,en:287,re:573},CX=[55,116,177,237],RY=[96,156,216,276,336,396,456];
-    const TREES=[{id:"el",name:"Elemental",hx:14},{id:"en",name:"Enhancement",hx:300},{id:"re",name:"Restoration",hx:586}];
-    /* [tree, column, row, name, most ranks]. A node with no name is one this build never uses. */
-    const N=(t,c,r,name,max)=>({t,c,r,name:name||null,max:max||0});
+    /* the icon sheet (images/talent-trees.webp): its size, where each tree starts, the icon size, the icons' columns and rows,
+       and the tree header icons along its top. Each tree is 4 columns of 64 pixels, its talents from the second row of 64 down. */
+    const W=768,H=512,ICON=56,HI=56,HY=4,PX={el:0,en:256,re:512},CX=[32,96,160,224],RY=[96,160,224,288,352,416,480];
+    const TREES=[{id:"el",name:"Elemental",hx:4},{id:"en",name:"Enhancement",hx:260},{id:"re",name:"Restoration",hx:516}];
+    /* [tree, column, row, name, most ranks] */
+    const N=(t,c,r,name,max)=>({t,c,r,name,max});
     const NODES=[
-      N("el",1,0),N("el",2,0,"Concussion",5),
-      N("el",0,1,"Elemental Devastation",3),N("el",1,1,"Reverberation",5),N("el",2,1),N("el",3,1,"Call of Flame",3),
-      N("el",0,2,"Elemental Focus",1),N("el",1,2),
-      N("el",0,3,"Trial by Fire",2),N("el",1,3),N("el",3,3),
-      N("el",0,4),N("el",1,4),N("el",2,4),N("el",2,5),N("el",1,6),
-      N("en",0,0),N("en",1,0,"Thundering Strikes",5),N("en",2,0),
-      N("en",0,1),N("en",1,1,"Mental Dexterity",3),N("en",2,1,"Improved Ghost Wolf",2),N("en",3,1),
+      N("el",1,0,"Convection",5),N("el",2,0,"Concussion",5),
+      N("el",0,1,"Elemental Devastation",3),N("el",1,1,"Reverberation",5),N("el",2,1,"Elemental Alacrity",3),N("el",3,1,"Call of Flame",3),
+      N("el",0,2,"Elemental Focus",1),N("el",1,2,"Elemental Warding",3),
+      N("el",0,3,"Trial by Fire",2),N("el",1,3,"Eye of the Storm",3),N("el",3,3,"Earthbound",1),
+      N("el",0,4,"Elemental Reach",2),N("el",1,4,"Call of Thunder",1),N("el",2,4,"Lightning Overload",3),
+      N("el",2,5,"Elemental Fury",5),N("el",1,6,"Lightning Mastery",1),
+      N("en",0,0,"Earth's Grasp",2),N("en",1,0,"Thundering Strikes",5),N("en",2,0,"Ancestral Knowledge",5),
+      N("en",0,1,"Guardian Totems",2),N("en",1,1,"Mental Dexterity",3),N("en",3,1,"Improved Lightning Shield",3),
       N("en",0,2,"Elemental Weapons",3),N("en",2,2,"Shamanistic Focus",1),N("en",3,2,"Anticipation",3),
-      N("en",0,3),N("en",1,3,"Flurry",5),N("en",2,3,"Stormstrike",1),
+      N("en",0,3,"Toughness",5),N("en",1,3,"Flurry",5),N("en",2,3,"Stormstrike",1),N("en",3,3,"Improved Ghost Wolf",2),
       N("en",0,4,"Spirit Weapons",1),N("en",1,4,"Mental Quickness",2),N("en",2,4,"Improved Stormstrike",2),
-      N("en",2,5),N("en",1,6),
-      N("re",1,0),N("re",2,0,"Tidal Focus",5),
-      N("re",0,1,"Mindfulness",3),N("re",1,1),N("re",2,1),N("re",3,1),
-      N("re",0,2),N("re",1,2),N("re",2,2),
-      N("re",0,3),N("re",1,3),N("re",2,3),
-      N("re",1,4),N("re",2,4),N("re",2,5),N("re",1,6)];
-    const BYNAME={};NODES.forEach(n=>{if(n.name)BYNAME[n.name]=n});
+      N("en",2,5,"Maelstrom Weapon",5),N("en",1,6,"Rage of the Farseer",1),
+      N("re",1,0,"Improved Healing Wave",5),N("re",2,0,"Tidal Focus",5),
+      N("re",0,1,"Mindfulness",3),N("re",1,1,"Natural Grace",3),N("re",2,1,"Totemic Focus",5),N("re",3,1,"Improved Reincarnation",2),
+      N("re",0,2,"Ancestral Healing",3),N("re",1,2,"Healing Focus",3),N("re",2,2,"Water Shield",1),
+      N("re",0,3,"Tidal Mastery",5),N("re",1,3,"Restorative Totems",5),N("re",2,3,"Mana Tide Totem",1),
+      N("re",1,4,"Healing Way",3),N("re",2,4,"Nature's Swiftness",1),
+      N("re",2,5,"Purification",5),N("re",1,6,"Riptide",1)];
+    const BYNAME={};NODES.forEach(n=>{BYNAME[n.name]=n});
+
+    /* Builds: a section holding <div data-build="id" data-name="..."></div> starts that build, and the sections after it belong to it.
+       Sections before the first build are shared. <div data-respec="30"></div> marks where a build respecs: its steps from there on are the new spec. */
+    const BUILDS=[];let cb=null,phase=1;
+    host.querySelectorAll(".sec").forEach(sec=>{
+      const bm=sec.querySelector("[data-build]");
+      if(bm){cb={id:bm.dataset.build,name:bm.dataset.name||bm.dataset.build,secs:[],respec:null};BUILDS.push(cb);phase=1;bm.remove()}
+      const rm=sec.querySelector("[data-respec]");
+      if(rm&&cb){cb.respec=+rm.dataset.respec;phase=2;rm.remove()}
+      if(cb){cb.secs.push(sec);sec.dataset.build=cb.id;sec.dataset.phase=String(phase)}});
 
     /* the steps are the rows of the tables on this page */
     const steps=[];
@@ -769,35 +784,49 @@
       const td=[...tr.children].map(x=>x.textContent.trim());if(td.length<3)return;
       const lv=td[0].match(/^(\d+)(?:\s+to\s+(\d+))?$/),rk=td[2].match(/^(\d+)(?:\s+to\s+(\d+))?$/),node=BYNAME[td[1]];
       if(!lv||!rk||!node)return;
-      const a=+lv[1],b=+(lv[2]||lv[1]),r1=+rk[1],r2=+(rk[2]||rk[1]);
-      const st={tr,node,a,b,n:b-a+1,r1,r2};steps.push(st);tr.classList.add("step");});
+      const sec=tr.closest(".sec"),a=+lv[1],b=+(lv[2]||lv[1]),r1=+rk[1],r2=+(rk[2]||rk[1]);
+      const st={tr,node,a,b,n:b-a+1,r1,r2,build:sec&&sec.dataset.build||null,phase:sec&&sec.dataset.phase==="2"?2:1};
+      steps.push(st);tr.classList.add("step")});
     if(!steps.length)return;
-    const first=steps[0].a,last=steps[steps.length-1].b,TOTAL=51;
-    const rankAt=(node,L)=>{let r=0;for(const s of steps){if(s.node!==node||L<s.a)continue;r=L>=s.b?s.r2:s.r1+(L-s.a)}return r};
+    const TOTAL=51;
+
+    /* A build's plan: the positions the slider and the scroll walk through, one per level, with the respec as a position of its own.
+       Each step covers the positions from pa to pb; the respec's steps all land at once, on the respec position. */
+    const planOf=b=>{
+      const ss=steps.filter(s=>!b||s.build===b.id),R=b&&b.respec;if(!ss.length)return null;
+      const pos=[],span=f=>{for(let L=Math.min(...f.map(s=>s.a));L<=Math.max(...f.map(s=>s.b));L++)pos.push({L,ph:f[0].phase})};
+      if(!R)span(ss);
+      else{const p1=ss.filter(s=>s.phase===1),p2=ss.filter(s=>s.phase===2&&s.a>R);span(p1);pos.push({L:R,ph:2,respec:true});if(p2.length){const at=pos.length;span(p2);for(let i=at;i<pos.length;i++)pos[i].ph=2}}
+      const ri=pos.findIndex(p=>p.respec);
+      for(const s of ss){
+        if(s.phase===2&&R&&s.b<=R)s.pa=s.pb=ri;
+        else{s.pa=pos.findIndex(p=>p.ph===s.phase&&!p.respec&&p.L===s.a);s.pb=pos.findIndex(p=>p.ph===s.phase&&!p.respec&&p.L===s.b)}}
+      return{b,ss,pos,used:new Set(ss.map(s=>s.node))}};
+    const plans=BUILDS.length?BUILDS.map(planOf).filter(Boolean):[planOf(null)];
+    let cp=plans[0];
+    const rankAt=(node,p)=>{const P=cp.pos[p];let r=0;for(const s of cp.ss){if(s.node!==node||s.phase!==P.ph||p<s.pa)continue;r=p>=s.pb?s.r2:s.r1+(P.L-s.a)}return r};
 
     /* build the trees */
     const root=el("div","tcalc");
     const head=el("div","tc-head");
-    const lvl=el("div","tc-level"),lvN=el("b",null,String(first));lvl.append(el("span",null,"Level"),lvN);
+    const lvl=el("div","tc-level"),lvN=el("b",null,"");lvl.append(el("span",null,"Level"),lvN);
     const pts=el("div","tc-pts"),ptN=el("b",null,"1");pts.append(el("span",null,"Points spent"),ptN,document.createTextNode(" / "+TOTAL));
-    const sl=el("input");sl.type="range";sl.id="tc-slider";sl.min=String(first);sl.max=String(last);sl.step="1";sl.value=String(first);
+    const sl=el("input");sl.type="range";sl.id="tc-slider";sl.step="1";
     sl.setAttribute("aria-label","Character level");
     head.append(lvl,pts,sl);
     const trees=el("div","tc-trees"),treeEls={};
     for(const t of TREES){
       const box=el("section","tc-tree"),h=el("header","tc-th"),ic=el("span","tc-ti");
-      ic.style.setProperty("--bx",String(t.hx));ic.style.setProperty("--by","8");
+      ic.style.setProperty("--bx",String(t.hx));ic.style.setProperty("--by",String(HY));
       const nm=el("span","tc-tn",t.name),cnt=el("span","tc-tc","0/51");
       h.append(ic,nm,cnt);
       const grid=el("div","tc-grid");
       box.append(h,grid);trees.append(box);treeEls[t.id]={cnt,grid,pts:0}}
     for(const n of NODES){
-      const d=el("div","tn"+(n.name?"":" un")),icon=el("span","tn-ic");
+      const d=el("div","tn"),icon=el("span","tn-ic");
       d.style.gridColumn=String(n.c+1);d.style.gridRow=String(n.r+1);
       d.style.setProperty("--bx",String(PX[n.t]+CX[n.c]-ICON/2));d.style.setProperty("--by",String(RY[n.r]-ICON/2));
-      d.append(icon);
-      if(n.name){const bd=el("span","tn-bd","0/"+n.max);d.append(bd);n.bd=bd;d.setAttribute("aria-label",n.name)}
-      else d.title="Not used in this build";
+      const bd=el("span","tn-bd","0/"+n.max);d.append(icon,bd);n.bd=bd;d.setAttribute("aria-label",n.name);
       n.el=d;treeEls[n.t].grid.append(d)}
     const hint=el("p","tc-hint","Scroll down or drag the slider. Gold means all ranks are taken, green means some.");
     root.append(head,trees,hint);
@@ -806,14 +835,18 @@
     [...host.children].forEach(c=>left.append(c));
     right.append(root);wrap.append(left,right);host.append(wrap);
 
-    /* Each section with a table stays pinned in place while the page scrolls through a runway of 46 pixels per level.
-       The table does not grow. The scrolling happens beneath it, and the level follows how far through the runway you are. */
-    const RUN_PX=46,pins=[];
+    /* Each section with a table stays pinned in place while the page scrolls through a runway of 46 pixels per position.
+       The table does not grow. The scrolling happens beneath it, and the position follows how far through the runway you are. */
+    const RUN_PX=46;let pins=[];
     left.querySelectorAll(".sec").forEach(sec=>{
-      const rows=steps.filter(s=>sec.contains(s.tr));if(!rows.length)return;
-      const a=Math.min(...rows.map(s=>s.a)),b=Math.max(...rows.map(s=>s.b)),w=el("div","pinwrap");
-      sec.parentNode.insertBefore(w,sec);w.append(sec);
-      pins.push({w,sec,a,b,m:b-a+1,run:(b-a+1)*RUN_PX,pt:76})});
+      if(!steps.some(s=>sec.contains(s.tr)))return;
+      const w=el("div","pinwrap");sec.parentNode.insertBefore(w,sec);w.append(sec)});
+    const pinsOf=plan=>{const out=[];
+      left.querySelectorAll(".pinwrap").forEach(w=>{
+        const rows=plan.ss.filter(s=>w.contains(s.tr));if(!rows.length)return;
+        const a=Math.min(...rows.map(s=>s.pa)),b=Math.max(...rows.map(s=>s.pb));
+        out.push({w,sec:w.firstElementChild,a,b,m:b-a+1,run:(b-a+1)*RUN_PX,pt:76})});
+      return out};
     /* The last section needs enough page beneath it to be scrolled all the way through its runway, and to keep the trees on screen
        until it is done. Tall windows need extra, because the footer is not tall enough to push the page far enough. */
     const layoutPins=()=>{
@@ -827,9 +860,8 @@
       const toEnd=window.innerHeight-h-last.pt-trailing;
       const forTrees=76+root.offsetHeight+16-(last.pt+h);
       last.w.style.height=(h+last.run+Math.max(0,toEnd,forTrees))+"px"};
-    layoutPins();
-    window.addEventListener("resize",layoutPins);
-    if("ResizeObserver" in window){const ro=new ResizeObserver(layoutPins);pins.forEach(p=>ro.observe(p.sec));ro.observe(root)}
+    window.addEventListener("resize",()=>layoutPins());
+    if("ResizeObserver" in window){const ro=new ResizeObserver(()=>layoutPins());left.querySelectorAll(".sec").forEach(s=>ro.observe(s));ro.observe(root)}
 
     /* size the nodes to the width and height that are available */
     const fit=()=>{
@@ -837,140 +869,139 @@
       const byW=((w-32-2*g)/3-22)/5.3,byH=(window.innerHeight-300)/10;
       const n=Math.max(24,Math.min(62,byW,byH));
       root.style.setProperty("--n",n.toFixed(1)+"px");root.style.setProperty("--s",(n/ICON).toFixed(4))};
-    root.style.setProperty("--W",String(W));root.style.setProperty("--H",String(H));
+    root.style.setProperty("--W",String(W));root.style.setProperty("--H",String(H));root.style.setProperty("--HI",String(HI));
     fit();
     if("ResizeObserver" in window)new ResizeObserver(fit).observe(root);window.addEventListener("resize",fit);
 
-    /* show a level */
+    /* show a position */
     let shown=-1;const prev=new Map();
-    const draw=L=>{
-      if(L===shown)return;shown=L;
-      const sum={el:0,en:0,re:0};
+    const draw=p=>{
+      if(p===shown)return;shown=p;
+      const P=cp.pos[p],sum={el:0,en:0,re:0};
       for(const n of NODES){
-        if(!n.name)continue;
-        const r=rankAt(n,L);sum[n.t]+=r;
+        const r=rankAt(n,p);sum[n.t]+=r;
         const was=prev.get(n);prev.set(n,r);
-        n.el.classList.toggle("on",r>0);n.el.classList.toggle("full",r>0&&r===n.max);
+        n.el.classList.toggle("on",r>0);n.el.classList.toggle("full",r>0&&r===n.max);n.el.classList.toggle("un",!cp.used.has(n));
         n.bd.textContent=r+"/"+n.max;
-        n.el.title=n.name+", rank "+r+" of "+n.max;
+        n.el.title=cp.used.has(n)?n.name+", rank "+r+" of "+n.max:n.name+": not used in this build";
         if(!calm&&was!==undefined&&r>was){n.el.classList.remove("pop");void n.el.offsetWidth;n.el.classList.add("pop")}}
       let total=0;
       for(const t of TREES){treeEls[t.id].cnt.textContent=sum[t.id]+"/51";total+=sum[t.id]}
-      ptN.textContent=String(total);lvN.textContent=String(L);sl.value=String(L);
-      for(const s of steps){
-        s.tr.classList.toggle("done",L>=s.b);
-        s.tr.classList.toggle("now",L>=s.a&&L<s.b);
-        s.tr.classList.toggle("next",L<s.a);
-        s.tr.style.setProperty("--rp",String(L>=s.b?1:L>=s.a?(L-s.a+1)/s.n:0))}};
+      ptN.textContent=String(total);lvN.textContent=P.L+(P.respec?" · respec":"");sl.value=String(p);
+      sl.setAttribute("aria-valuetext","Level "+P.L+(P.respec?", after the respec":""));
+      for(const s of cp.ss){
+        s.tr.classList.toggle("done",p>=s.pb);
+        s.tr.classList.toggle("now",p>=s.pa&&p<s.pb);
+        s.tr.classList.toggle("next",p<s.pa);
+        s.tr.style.setProperty("--rp",String(p>=s.pb?1:p>=s.pa?(p-s.pa+1)/(s.pb-s.pa+1):0))}};
 
-    /* scrolling picks the level: the row under the middle of the window is "now", and its points fill in as you pass through it */
-    /* The target level comes from the pinned sections. Once a section is pinned, its levels follow the scroll through its runway.
-       The trees then walk to that level one at a time, so even a fast scroll plays through every level. */
-    const levelFromScroll=()=>{
-      let L=first;
-      for(const p of pins){
-        const r=p.w.getBoundingClientRect();
-        if(r.top>p.pt)break;
-        const prog=Math.max(0,Math.min(1,(p.pt-r.top)/p.run));
-        L=p.a+Math.min(p.m-1,Math.floor(prog*p.m))}
-      return L};
-    let disp=first,target=first,timer=null,lockUntil=0;
+    /* Scrolling picks the position: once a section is pinned, its positions follow the scroll through its runway.
+       The trees then walk to that position one step at a time, so even a fast scroll plays through every level. */
+    const fromScroll=()=>{
+      let p=0;
+      for(const q of pins){
+        const r=q.w.getBoundingClientRect();
+        if(r.top>q.pt)break;
+        const prog=Math.max(0,Math.min(1,(q.pt-r.top)/q.run));
+        p=q.a+Math.min(q.m-1,Math.floor(prog*q.m))}
+      return p};
+    let disp=0,target=0,timer=null,lockUntil=0;
     const gap=()=>{const d=Math.abs(target-disp);return d>14?45:d>6?80:150};
     const tick=()=>{
       timer=null;if(disp===target)return;
       disp+=target>disp?1:-1;draw(disp);
       if(disp!==target)timer=setTimeout(tick,gap())};
-    const go=L=>{
-      target=L;
-      if(calm){disp=L;draw(L);return}
+    const go=p=>{
+      target=p;
+      if(calm){disp=p;draw(p);return}
       if(!timer&&disp!==target)timer=setTimeout(tick,0)};
     let queued=false;
-    const onScroll=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(Date.now()>lockUntil)go(levelFromScroll())})};
+    const onScroll=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(Date.now()>lockUntil)go(fromScroll())})};
     window.addEventListener("scroll",onScroll,{passive:true});window.addEventListener("resize",onScroll);
 
-    /* the slider sets the level right away, and scrolls the page to the row for that level */
+    /* the slider sets the position right away, and scrolls the page to the row for it */
     sl.addEventListener("input",()=>{
-      const L=+sl.value;
-      clearTimeout(timer);timer=null;disp=target=L;draw(L);
+      const p=+sl.value;
+      clearTimeout(timer);timer=null;disp=target=p;draw(p);
       lockUntil=Date.now()+700;
-      const p0=pins.find(x=>L>=x.a&&L<=x.b);let t=0;
-      if(L>first&&p0){const r=p0.w.getBoundingClientRect(),prog=(L-p0.a+0.5)/p0.m;t=r.top+window.scrollY-p0.pt+prog*p0.run}
+      const q=pins.find(x=>p>=x.a&&p<=x.b);let t=0;
+      if(p>0&&q){const r=q.w.getBoundingClientRect(),prog=(p-q.a+0.5)/q.m;t=r.top+window.scrollY-q.pt+prog*q.run}
       window.scrollTo({top:Math.max(0,t),behavior:"auto"})});
 
-    /* Elemental Devastation and Call of Flame can be taken in either order. A switch in the text swaps them in the table and in the trees. */
-    const swapMarker=left.querySelector('[data-widget="swap-order"]');
-    const edNode=BYNAME["Elemental Devastation"],cofNode=BYNAME["Call of Flame"];
-    if(swapMarker&&edNode&&cofNode){
-      const pair=steps.filter(s=>s.node===edNode||s.node===cofNode).sort((x,y)=>x.a-y.a);
+    /* switch to a build: show its sections and its sidebar links, and walk the trees through its plan */
+    const syncSide=()=>{
+      const side=document.getElementById("side");if(!side)return;
+      side.querySelectorAll('a[href^="#"]').forEach(a=>{const t=document.getElementById(a.getAttribute("href").slice(1)),s=t&&t.closest(".sec");if(s&&s.dataset.build)a.hidden=!!s.closest("[hidden]")})};
+    const use=plan=>{
+      cp=plan;
+      for(const b of BUILDS)for(const sec of b.secs)(sec.closest(".pinwrap")||sec).hidden=!(plan.b&&plan.b.id===b.id);
+      pins=pinsOf(plan);
+      sl.min="0";sl.max=String(plan.pos.length-1);
+      prev.clear();shown=-1;clearTimeout(timer);timer=null;
+      layoutPins();disp=target=fromScroll();draw(disp);syncSide()};
+
+    /* Elemental Devastation and Call of Flame can be taken in either order. A switch in a build's text swaps them in its table and in the trees. */
+    left.querySelectorAll('[data-widget="swap-order"]').forEach(swapMarker=>{
+      const bid=(swapMarker.closest(".sec")||{dataset:{}}).dataset.build||null;
+      const edNode=BYNAME["Elemental Devastation"],cofNode=BYNAME["Call of Flame"];
+      const pair=steps.filter(s=>s.build===bid&&(s.node===edNode||s.node===cofNode)).sort((x,y)=>x.phase-y.phase||x.a-y.a);
       let acc=0;const blk1=[],blk2=[];
       for(const s of pair){if(acc<edNode.max){blk1.push(s);acc+=s.n}else blk2.push(s)}
-      const ok=edNode.max===cofNode.max&&acc===edNode.max&&blk2.reduce((n,s)=>n+s.n,0)===cofNode.max;
-      if(!ok){swapMarker.remove()}
-      else{
-        const setRows=(first,second)=>{
-          for(const [blk,node] of [[blk1,first],[blk2,second]]){
-            let k=0;
-            for(const s of blk){s.node=node;s.r1=k+1;s.r2=k+s.n;k+=s.n}}};
-        const paint=s=>{
-          s.tr.children[1].textContent=s.node.name;
-          s.tr.children[2].textContent=s.r1===s.r2?String(s.r1):s.r1+" to "+s.r2};
-        let current=pair[0].node===edNode?"ed":"cof";
-        const box=el("div","swapbox"),lab=el("span","swl","Take first"),seg=el("div","swseg");
-        seg.setAttribute("role","group");seg.setAttribute("aria-label","Which talent to take first");
-        const mk=(id,text)=>{const b=el("button",null,text);b.type="button";b.dataset.v=id;b.setAttribute("aria-pressed",String(id===current));
-          b.onclick=()=>choose(id);seg.append(b);return b};
-        const bED=mk("ed","Elemental Devastation"),bCOF=mk("cof","Call of Flame");
-        const arrows=el("span","swic","\u21C4");arrows.setAttribute("aria-hidden","true");
-        box.append(lab,seg,arrows);
-        const live=el("span","swlive");live.setAttribute("aria-live","polite");box.append(live);
-        swapMarker.replaceWith(box);
-        const choose=id=>{
-          if(id===current)return;
-          current=id;
-          for(const b of seg.children)b.setAttribute("aria-pressed",String(b.dataset.v===id));
-          const first=id==="ed"?edNode:cofNode,second=id==="ed"?cofNode:edNode;
-          live.textContent=first.name+" first";
-          setRows(first,second);
-          const refresh=()=>{shown=-1;draw(disp)};
-          if(calm){pair.forEach(paint);refresh();return}
-          pair.forEach((s,i)=>{
-            for(const td of [s.tr.children[1],s.tr.children[2]]){
-              td.style.animationDelay=(i*90)+"ms";td.classList.remove("flip");void td.offsetWidth;td.classList.add("flip")}
-            setTimeout(()=>paint(s),300+i*90)});
-          setTimeout(refresh,300);
-          for(const n of [edNode,cofNode]){n.el.classList.remove("swp");void n.el.offsetWidth;n.el.classList.add("swp")}
-          setTimeout(()=>{for(const s of pair)for(const td of [s.tr.children[1],s.tr.children[2]])td.classList.remove("flip");for(const n of [edNode,cofNode])n.el.classList.remove("swp")},1100)}}}
-
-    /* A pick between talents for the same levels, like Reverberation or Mental Quickness at 58 to 59:
-       <div data-widget="alt-pick" data-levels="58-59" data-options="Reverberation|Mental Quickness"></div>
-       The table row and the trees show the one picked, and text marked data-for="<talent>" shows only with it. */
-    left.querySelectorAll('[data-widget="alt-pick"]').forEach(mk=>{
-      const lv=(mk.dataset.levels||"").match(/^(\d+)-(\d+)$/),nodes=(mk.dataset.options||"").split("|").map(n=>BYNAME[n.trim()]);
-      const st=lv&&steps.find(s=>s.a===+lv[1]&&s.b===+lv[2]);
-      if(!st||nodes.length<2||nodes.some(n=>!n)||!nodes.includes(st.node)){mk.remove();return}
-      /* each talent continues from the ranks it already has by these levels */
-      const rankFrom=node=>steps.filter(s=>s!==st&&s.node===node&&s.b<st.a).reduce((n,s)=>n+s.n,0)+1;
-      if(nodes.some(n=>rankFrom(n)+st.n-1>n.max)){mk.remove();return}
-      const box=el("div","swapbox"),seg=el("div","swseg"),live=el("span","swlive");
-      seg.setAttribute("role","group");seg.setAttribute("aria-label","Talent for levels "+st.a+" to "+st.b);live.setAttribute("aria-live","polite");
-      box.append(el("span","swl","Levels "+st.a+" to "+st.b),seg,live);
-      const notes=n=>left.querySelectorAll('[data-for="'+n.name+'"]');
-      const show=()=>nodes.forEach(n=>notes(n).forEach(x=>{x.hidden=n!==st.node}));
-      const paint=()=>{st.tr.children[1].textContent=st.node.name;st.tr.children[2].textContent=st.r1===st.r2?String(st.r1):st.r1+" to "+st.r2};
-      const choose=n=>{
-        if(n===st.node)return;
-        const was=st.node;st.node=n;st.r1=rankFrom(n);st.r2=st.r1+st.n-1;
-        for(const b of seg.children)b.setAttribute("aria-pressed",String(b.textContent===n.name));
-        live.textContent=n.name+" at levels "+st.a+" to "+st.b;show();
+      const ok=pair.length&&edNode.max===cofNode.max&&acc===edNode.max&&blk2.reduce((n,s)=>n+s.n,0)===cofNode.max;
+      if(!ok){swapMarker.remove();return}
+      const setRows=(first,second)=>{
+        for(const [blk,node] of [[blk1,first],[blk2,second]]){
+          let k=0;
+          for(const s of blk){s.node=node;s.r1=k+1;s.r2=k+s.n;k+=s.n}}};
+      const paint=s=>{
+        s.tr.children[1].textContent=s.node.name;
+        s.tr.children[2].textContent=s.r1===s.r2?String(s.r1):s.r1+" to "+s.r2};
+      let current=pair[0].node===edNode?"ed":"cof";
+      const box=el("div","swapbox"),lab=el("span","swl","Take first"),seg=el("div","swseg");
+      seg.setAttribute("role","group");seg.setAttribute("aria-label","Which talent to take first");
+      const mk=(id,text)=>{const b=el("button",null,text);b.type="button";b.dataset.v=id;b.setAttribute("aria-pressed",String(id===current));
+        b.onclick=()=>choose(id);seg.append(b);return b};
+      mk("ed","Elemental Devastation");mk("cof","Call of Flame");
+      const arrows=el("span","swic","⇄");arrows.setAttribute("aria-hidden","true");
+      box.append(lab,seg,arrows);
+      const live=el("span","swlive");live.setAttribute("aria-live","polite");box.append(live);
+      swapMarker.replaceWith(box);
+      const choose=id=>{
+        if(id===current)return;
+        current=id;
+        for(const b of seg.children)b.setAttribute("aria-pressed",String(b.dataset.v===id));
+        const first=id==="ed"?edNode:cofNode,second=id==="ed"?cofNode:edNode;
+        live.textContent=first.name+" first";
+        setRows(first,second);
         const refresh=()=>{shown=-1;draw(disp)};
-        if(calm){paint();refresh();return}
-        for(const td of [st.tr.children[1],st.tr.children[2]]){td.classList.remove("flip");void td.offsetWidth;td.classList.add("flip")}
-        setTimeout(()=>{paint();refresh()},300);
-        for(const x of [was,n]){x.el.classList.remove("swp");void x.el.offsetWidth;x.el.classList.add("swp")}
-        setTimeout(()=>{for(const td of [st.tr.children[1],st.tr.children[2]])td.classList.remove("flip");for(const x of [was,n])x.el.classList.remove("swp")},1100)};
-      for(const n of nodes){const b=el("button",null,n.name);b.type="button";b.setAttribute("aria-pressed",String(n===st.node));b.onclick=()=>choose(n);seg.append(b)}
-      mk.replaceWith(box);show()});
-    disp=target=levelFromScroll();draw(disp)}
+        if(calm){pair.forEach(paint);refresh();return}
+        pair.forEach((s,i)=>{
+          for(const td of [s.tr.children[1],s.tr.children[2]]){
+            td.style.animationDelay=(i*90)+"ms";td.classList.remove("flip");void td.offsetWidth;td.classList.add("flip")}
+          setTimeout(()=>paint(s),300+i*90)});
+        setTimeout(refresh,300);
+        for(const n of [edNode,cofNode]){n.el.classList.remove("swp");void n.el.offsetWidth;n.el.classList.add("swp")}
+        setTimeout(()=>{for(const s of pair)for(const td of [s.tr.children[1],s.tr.children[2]])td.classList.remove("flip");for(const n of [edNode,cofNode])n.el.classList.remove("swp")},1100)}});
+
+    /* the build switcher: <div data-widget="build-pick"></div> in the shared text; the address keeps the pick (?build=id) so a build can be linked */
+    const pickMarker=left.querySelector('[data-widget="build-pick"]');
+    if(pickMarker&&plans.length>1){
+      const want=new URLSearchParams(location.search).get("build");
+      const start=plans.find(p=>p.b.id===want)||plans[0];
+      const box=el("div","swapbox buildpick"),seg=el("div","swseg"),live=el("span","swlive");
+      seg.setAttribute("role","group");seg.setAttribute("aria-label","Which build");live.setAttribute("aria-live","polite");
+      for(const plan of plans){
+        const b=el("button",null,plan.b.name);b.type="button";b.setAttribute("aria-pressed",String(plan===start));
+        b.onclick=()=>{if(plan===cp)return;
+          for(const x of seg.children)x.setAttribute("aria-pressed",String(x===b));
+          live.textContent=plan.b.name;use(plan);
+          try{const u=new URL(location.href);u.searchParams.set("build",plan.b.id);u.hash="";history.replaceState(null,"",u)}catch(e){}};
+        seg.append(b)}
+      box.append(el("span","swl","Build"),seg,live);pickMarker.replaceWith(box);
+      use(start)}
+    else{if(pickMarker)pickMarker.remove();use(cp)}
+    /* the sidebar is built after this, so hide the other builds' links once it is there */
+    setTimeout(syncSide,0)}
 
   /* Sidebar on guide pages: the sections of this guide, then every guide */
   function side(){

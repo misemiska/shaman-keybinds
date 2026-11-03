@@ -441,7 +441,7 @@ html.lbon{overflow:hidden}
 .tleft tbody tr.step.now td{background:color-mix(in srgb,var(--hi) 14%,transparent);opacity:1}
 .tleft tbody tr.step.now td:first-child{box-shadow:inset 3px 0 0 var(--hi)}
 .tleft tbody tr.step.done td{opacity:1}
-.tcalc{--n:56px;--s:1.1667;padding:16px;border:1px solid var(--line);background:var(--tc-bg);color:var(--tc-fg)}
+.tcalc{--n:56px;--s:1.1667;--img:url(images/talent-trees.webp);padding:16px;border:1px solid var(--line);background:var(--tc-bg);color:var(--tc-fg)}
 .tc-head{display:grid;grid-template-columns:auto auto minmax(120px,1fr);align-items:center;gap:8px 22px;margin-bottom:14px}
 .tc-level span,.tc-pts span{display:block;margin-bottom:4px;font:600 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--tc-mute)}
 .tc-level b{font:700 38px/1 var(--mono);color:var(--hi)}
@@ -451,12 +451,12 @@ html.lbon{overflow:hidden}
 .tc-trees{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .tc-tree{min-width:0;overflow:hidden;padding:10px 10px 14px;border:1px solid var(--tc-line);background:var(--tc-tree)}
 .tc-th{display:flex;align-items:center;gap:7px;margin-bottom:12px;font:700 13px/1 var(--sans)}
-.tc-ti{flex:none;width:28px;height:28px;border-radius:50%;background:url(images/leveling-talents.png) no-repeat;background-size:calc(867px*28/34) auto;background-position:calc(var(--bx)*-28px/34) calc(var(--by)*-28px/34)}
+.tc-ti{flex:none;width:28px;height:28px;border-radius:50%;background:var(--img) no-repeat;background-size:calc(var(--W)*28px/var(--HI)) auto;background-position:calc(var(--bx)*-28px/var(--HI)) calc(var(--by)*-28px/var(--HI))}
 .tc-tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tc-fg)}
 .tc-tc{flex:none;font:600 11px/1 var(--mono);color:var(--tc-mute2)}
 .tc-grid{display:grid;grid-template-columns:repeat(4,var(--n));grid-template-rows:repeat(7,var(--n));gap:calc(var(--n)*.42);justify-content:center}
 .tn{position:relative;width:var(--n);height:var(--n)}
-.tn-ic{position:absolute;inset:0;background:url(images/leveling-talents.png) no-repeat;background-size:calc(var(--s)*867px) calc(var(--s)*510px);background-position:calc(var(--s)*var(--bx)*-1px) calc(var(--s)*var(--by)*-1px);filter:var(--tc-off);transition:filter .25s}
+.tn-ic{position:absolute;inset:0;background:var(--img) no-repeat;background-size:calc(var(--s)*var(--W)*1px) calc(var(--s)*var(--H)*1px);background-position:calc(var(--s)*var(--bx)*-1px) calc(var(--s)*var(--by)*-1px);filter:var(--tc-off);transition:filter .25s}
 .tn::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px var(--tc-node);pointer-events:none;transition:box-shadow .25s}
 .tn.un .tn-ic{filter:var(--tc-off);opacity:.8}
 .tn.on .tn-ic{filter:none}
