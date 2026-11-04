@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Page not found &middot; Miska's Shaman Emporium</title>
+<script>
+/* The site used to live under /shaman-keybinds/. GitHub shows this page for any address it can't find,
+   so an old link is sent on to the same page at its new address, keeping ?build= and #section. */
+(function(){
+  var p=location.pathname,old="/shaman-keybinds";
+  if(p===old||p.indexOf(old+"/")===0)location.replace((p.slice(old.length)||"/")+location.search+location.hash);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<main class="docwrap" style="grid-template-columns:minmax(0,1fr)">
+  <div class="docmain">
+  <h1>Page not found</h1>
+  <p class="lead">There is no page at this address. It may have moved.</p>
+  <p><a href="/">Go to Miska's Shaman Emporium</a></p>
+  </div>
+</main>
+</body>
+</html>
