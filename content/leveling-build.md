@@ -14,16 +14,16 @@ Scroll down and the talent trees on the right fill in, one point per level, as e
 ### Levels 10 to 25
 <div data-build="enhance" data-name="Enhancement first, no respec"></div>
 
-Thundering Strikes first, then Mental Dexterity, which leads to Flurry. Ancestral Knowledge, Shamanistic Focus and Anticipation follow, and Stormstrike comes at 25, as soon as the tree opens its fourth row.
+Thundering Strikes first, then Mental Dexterity, which leads to Flurry. Improved Lightning Shield, Shamanistic Focus and Anticipation follow, and Stormstrike comes at 25, as soon as the tree opens its fourth row.
 
 | Levels | Talent | Ranks |
 | --- | --- | --- |
 | 10 to 14 | Thundering Strikes | 1 to 5 |
 | 15 to 17 | Mental Dexterity | 1 to 3 |
-| 18 to 19 | Ancestral Knowledge | 1 to 2 |
+| 18 to 19 | Improved Lightning Shield | 1 to 2 |
 | 20 | Shamanistic Focus | 1 |
 | 21 to 23 | Anticipation | 1 to 3 |
-| 24 | Ancestral Knowledge | 3 |
+| 24 | Improved Lightning Shield | 3 |
 | 25 | Stormstrike | 1 |
 
 ### Levels 26 to 34
@@ -87,10 +87,10 @@ At 30, reset your talents at a trainer and spend the 21 points again, in this or
 | --- | --- | --- |
 | 10 to 14 | Thundering Strikes | 1 to 5 |
 | 15 to 17 | Mental Dexterity | 1 to 3 |
-| 18 to 19 | Ancestral Knowledge | 1 to 2 |
+| 18 to 19 | Improved Lightning Shield | 1 to 2 |
 | 20 | Shamanistic Focus | 1 |
 | 21 to 23 | Anticipation | 1 to 3 |
-| 24 | Ancestral Knowledge | 3 |
+| 24 | Improved Lightning Shield | 3 |
 | 25 | Stormstrike | 1 |
 | 26 to 27 | Improved Ghost Wolf | 1 to 2 |
 | 28 to 29 | Flurry | 1 to 2 |
@@ -138,16 +138,16 @@ Tidal Focus and Mindfulness first, then two points of Totemic Focus and Water Sh
 | 20 | Water Shield | 1 |
 
 ### Levels 21 to 35
-Into Enhancement: Thundering Strikes, Mental Dexterity, Ancestral Knowledge, Shamanistic Focus and Anticipation.
+Into Enhancement: Thundering Strikes, Mental Dexterity, Improved Lightning Shield, Shamanistic Focus and Anticipation.
 
 | Levels | Talent | Ranks |
 | --- | --- | --- |
 | 21 to 25 | Thundering Strikes | 1 to 5 |
 | 26 to 28 | Mental Dexterity | 1 to 3 |
-| 29 to 30 | Ancestral Knowledge | 1 to 2 |
+| 29 to 30 | Improved Lightning Shield | 1 to 2 |
 | 31 | Shamanistic Focus | 1 |
 | 32 to 34 | Anticipation | 1 to 3 |
-| 35 | Ancestral Knowledge | 3 |
+| 35 | Improved Lightning Shield | 3 |
 
 ### Levels 36 to 45
 Stormstrike, Improved Ghost Wolf, two points of Flurry, Improved Stormstrike, Spirit Weapons and Mental Quickness.
